@@ -1,0 +1,148 @@
+import '../styles/dashboard.css';
+import stockoutJson from '../data/Stockout_Risk_Scoring.json';
+import Sidebar from '../components/Sidebar';
+import Header from '../components/Header';
+import KPICard from '../components/KPICard';
+import ChartCard from '../components/ChartCard';
+import DynamicChart from '../assets/charts/DynamicChart';
+import RiskTrend from '../assets/charts/RiskTrend';
+import RiskScatter from '../assets/charts/RiskScatter';
+
+const branchNames = {
+  'BR-BLR-01': 'Bangalore',
+  'BR-CHN-02': 'Chennai',
+  'BR-HYD-03': 'Hyderabad',
+  'BR-DEL-04': 'Delhi',
+  'BR-MUM-05': 'Mumbai',
+};
+
+function flatten(table) {
+  return Object.values(table).flat();
+}
+
+function severityClass(value) {
+  return String(value).toLowerCase();
+}
+
+export default function StockoutRiskPage({ onNavigate }) {
+  const { metadata, summary, graph_data: graphs, forecast_table: table } = stockoutJson.result;
+  const forecastRows = flatten(table);
+  const detailsByPart = Object.fromEntries(forecastRows.map(row => [row.part_number, row]));
+  const alerts = graphs.auto_pr_trigger_log_today.map(alert => ({ ...alert, ...detailsByPart[alert.part_number] }));
+  const riskTrend = graphs.risk_trend_over_time.map(item => ({
+    d: new Date(`${item.period_date}T00:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+    cr: item.critical_count,
+    hi: item.high_count,
+    md: item.medium_count,
+  }));
+
+  const kpis = [
+    { label: 'Critical Parts (≥70%)', value: summary.critical_stockout_parts, delta: `${summary.branches_with_critical_alerts} branches · Hyd + Undercarriage`, type: 'alert', deltaDir: 'down' },
+    { label: 'High Risk (50–70%)', value: summary.high_stockout_parts, delta: 'Auto-PR raised for most', type: 'alert-amb', deltaDir: 'warn' },
+    { label: 'Jobs at Risk', value: summary.jobs_at_risk_if_stockouts_occur, delta: `${summary.sla_breach_risk_jobs} SLA breach · avg 17d delay`, deltaDir: 'down' },
+    { label: 'Value at Stockout Risk', value: `₹${(summary.total_value_at_stockout_risk_inr / 10000000).toFixed(2)}Cr`, delta: 'if no action taken today', deltaDir: 'down' },
+  ];
+
+  return (
+    <div className="shell stockout-shell">
+      <Sidebar active="stockout" onNavigate={onNavigate} />
+      <main className="main stockout-page">
+        <Header
+          title="Stockout Risk Scoring — Sub-model 4.2"
+          subtitle="Upstream from 4.1 predicted_qty · Auto-PR automation"
+        />
+
+        <div className="stockout-content">
+        <div className="stockout-intro">
+          <div>
+            <h2>Stockout Risk Scoring — Sub-model 4.2</h2>
+            <p>Parts ranked by stockout probability. Upstream from 4.1 predicted_qty. Auto-PRs triggered for critical/high risk parts. Anomaly-flagged PRs held pending review.</p>
+          </div>
+          <span className="risk-action-badge">● {summary.critical_stockout_parts} CRITICAL · action required</span>
+        </div>
+
+        <div className="kpis stockout-kpis">
+          {kpis.map(kpi => <KPICard key={kpi.label} {...kpi} />)}
+        </div>
+
+        <div className="stockout-chart-grid">
+          <ChartCard title="Risk Trend — 6 Weeks" tag="stacked severity" height="sm">
+            <RiskTrend data={riskTrend} />
+          </ChartCard>
+          <ChartCard title="Days Cover vs Lead Time" tag="scatter · bubble size = risk" height="sm">
+            <RiskScatter data={graphs.days_of_cover_vs_lead_time_scatter} />
+          </ChartCard>
+          <ChartCard title="Jobs at Risk by Category" tag="SLA impact" height="sm">
+            <DynamicChart
+              labels={graphs.jobs_impacted_by_category.map(item => item.category)}
+              datasets={[
+                { label: 'Jobs at Risk', data: graphs.jobs_impacted_by_category.map(item => item.jobs_at_risk), backgroundColor: '#ef5a5acc' },
+                { label: 'SLA Jobs', data: graphs.jobs_impacted_by_category.map(item => item.sla_jobs_at_risk), backgroundColor: '#f5b400cc' },
+              ]}
+            />
+          </ChartCard>
+        </div>
+
+        <div className="panel trigger-panel">
+          <h3>Auto PR Trigger Log — Today <span className="tag">{summary.auto_pr_triggered_today} raised · {summary.auto_pr_blocked_anomaly} blocked</span></h3>
+          <div className="trigger-list">
+            {alerts.map(alert => (
+              <div className="trigger-row" key={alert.alert_id}>
+                <span className={`trigger-state ${alert.auto_pr_raised ? 'raised' : 'blocked'}`}>{alert.auto_pr_raised ? 'PR RAISED' : 'BLOCKED'}</span>
+                <span className="trigger-id">{alert.alert_id}</span>
+                <span className="trigger-main">
+                  <strong>{alert.part_number}</strong> — {alert.branch_name?.replace(' Branch', '') ?? branchNames[alert.branch_id]}
+                  {alert.auto_pr_raised
+                    ? ` · PR: ${alert.pr_number} · Qty: ${alert.rec_order_qty}`
+                    : <small>{alert.auto_pr_blocked_reason}</small>}
+                </span>
+                <span className={`risk-orb ${severityClass(alert.severity)}`}>{alert.stockout_risk_pct}%</span>
+                <span className={`table-badge ${severityClass(alert.severity)}`}>{alert.severity}</span>
+                <span className="days-negative">{alert.days_until_stockout}d</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="panel stockout-table-panel">
+          <h3>Critical & High Stockout Risk Parts <span className="tag">primary_table.rows · ranked by risk</span></h3>
+          <div className="data-table-wrap">
+            <table className="data-table stockout-table">
+              <thead>
+                <tr>
+                  <th>#</th><th>Part</th><th>Branch</th><th>Category</th><th>Risk Score</th>
+                  <th>Days to Stockout</th><th>Stock on Hand</th><th>Days Cover</th>
+                  <th>Lead Time</th><th>Forecast 30d</th><th>Auto PR</th><th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {alerts.map((row, index) => (
+                  <tr key={row.alert_id}>
+                    <td>{index + 1}</td>
+                    <td><strong>{row.part_number}</strong><small>{row.part_description ?? 'Priority stockout alert'}</small></td>
+                    <td>{row.branch_name?.replace(' Branch', '') ?? branchNames[row.branch_id]}</td>
+                    <td><span className="category-chip">{row.part_category ?? 'Parts'}</span></td>
+                    <td><span className={`risk-orb ${severityClass(row.severity)}`}>{row.stockout_risk_pct}%</span></td>
+                    <td className="days-negative">{row.days_until_stockout}d</td>
+                    <td>{row.stock_on_hand ?? '—'}</td>
+                    <td className={(row.days_of_cover ?? 0) < (row.vendor_lead_time_days ?? 99) ? 'danger-text' : 'good-text'}>{row.days_of_cover != null ? `${row.days_of_cover}d` : '—'}</td>
+                    <td>{row.vendor_lead_time_days != null ? `${row.vendor_lead_time_days}d` : '—'}</td>
+                    <td>{row.predicted_qty_30d ?? row.rec_order_qty}</td>
+                    <td><span className={`table-badge ${row.auto_pr_raised ? 'created' : 'pending'}`}>{row.auto_pr_raised ? 'PR Raised' : 'Pending'}</span></td>
+                    <td><button className="table-action">⚡ Expedite</button> <button className="table-action muted">Review</button></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div className="foot-note">
+          <span>model_name: {metadata.model_name} · model_version: {metadata.model_version}</span>
+          <span>dependency: part_demand_forecast · confidence: {metadata.confidence_level}</span>
+        </div>
+        </div>
+      </main>
+    </div>
+  );
+}

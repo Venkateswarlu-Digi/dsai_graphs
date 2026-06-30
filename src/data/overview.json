@@ -1,0 +1,143 @@
+{
+  "overview": {
+    "meta": {
+      "title": "Parts Demand Overview",
+      "description": "Consolidated view across all 5 sub-models — stockout risk, demand forecast, safety stock, anomaly detection and SAP PR/PO automation.",
+      "subModels": "4.1–4.5",
+      "modelSuite": "parts_demand_prediction",
+      "modelVersion": "1.0",
+      "runId": "RUN-PD-20260624-001",
+      "confidence": "80%",
+      "dataFreshness": "5h ago"
+    },
+    "banner": {
+      "type": "monsoon",
+      "message": "Monsoon Season Demand Uplift Active",
+      "detail": "Hydraulics +30%, Undercarriage +27% · Model 4.1 seasonal adjustment · Period: Jun–Sep 2026 · Data freshness: 5h ago"
+    },
+    "kpis": [
+      { "label": "Total Parts",       "value": "8,420",    "delta": "across 12 branches",         "type": "normal" },
+      { "label": "Critical Stockout", "value": "38",       "delta": "≥70% risk · 3 branches",     "type": "alert",     "deltaDir": "down" },
+      { "label": "Auto PRs Today",    "value": "24",       "delta": "5 blocked — anomaly",        "type": "alert-amb", "deltaDir": "warn" },
+      { "label": "Anomalies",         "value": "12",       "delta": "3 critical · 9 warning",     "type": "alert",     "deltaDir": "down" },
+      { "label": "Safety Stock +Δ",   "value": "312",      "delta": "increase recommended",       "type": "normal",    "deltaDir": "up" },
+      { "label": "30d Forecast Value","value": "₹4.86Cr",  "delta": "total procurement est.",     "type": "normal",    "deltaDir": "up" },
+      { "label": "Jobs at Risk",      "value": "89",       "delta": "12 SLA breach risk",         "type": "alert",     "deltaDir": "down" },
+      { "label": "Avg Days Cover",    "value": "18.4d",    "delta": "fleet average",              "type": "normal" }
+    ],
+    "charts": {
+      "demandTrend": {
+        "chartId": "chOvDemand",
+        "title": "Demand Trend",
+        "tag": "4.1 · 90d",
+        "type": "line",
+        "labels": ["Jun 10","Jun 17","Jun 24","Jul 1","Jul 8","Jul 15","Jul 22","Jul 29","Aug 5","Aug 12","Aug 19","Aug 26","Sep 2"],
+        "datasets": [
+          { "label": "Actual",   "data": [9640,10280,null,null,null,null,null,null,null,null,null,null,null] },
+          { "label": "Forecast", "data": [9820,10140,10650,11200,12400,13100,12800,11900,11400,10900,10600,10200,9800] }
+        ]
+      },
+      "stockoutRiskDonut": {
+        "chartId": "chOvRiskDonut",
+        "title": "Stockout Risk Split",
+        "tag": "4.2",
+        "type": "doughnut",
+        "labels": ["CRITICAL", "HIGH", "MEDIUM", "LOW"],
+        "data": [38, 62, 43, 8277]
+      },
+      "riskTrend": {
+        "chartId": "chOvRiskTrend",
+        "title": "Risk Trend — 6 Weeks",
+        "tag": "4.2",
+        "type": "bar",
+        "stacked": true,
+        "data": [
+          { "d": "Jun 10", "cr": 22, "hi": 41, "md": 38 },
+          { "d": "Jun 17", "cr": 28, "hi": 48, "md": 40 },
+          { "d": "Jun 24", "cr": 38, "hi": 62, "md": 43 },
+          { "d": "Jul 1",  "cr": 44, "hi": 71, "md": 48 },
+          { "d": "Jul 8",  "cr": 52, "hi": 84, "md": 52 },
+          { "d": "Jul 15", "cr": 48, "hi": 78, "md": 49 }
+        ]
+      },
+      "safetyStockDelta": {
+        "chartId": "chOvSafety",
+        "title": "Safety Stock Δ",
+        "tag": "4.3",
+        "type": "bar",
+        "data": [
+          { "cat": "Undercarriage", "curr": 12.4, "rec": 15.8, "chg": 27.4 },
+          { "cat": "Hydraulics",    "curr": 8.2,  "rec": 11.4, "chg": 39.0 },
+          { "cat": "Engine",        "curr": 18.6, "rec": 19.2, "chg": 3.2  },
+          { "cat": "Filters",       "curr": 22.0, "rec": 20.8, "chg": -5.5 },
+          { "cat": "Transmission",  "curr": 6.8,  "rec": 8.4,  "chg": 23.5 },
+          { "cat": "Brakes",        "curr": 4.2,  "rec": 4.8,  "chg": 14.3 }
+        ]
+      },
+      "anomalyZScore": {
+        "chartId": "chOvAnom",
+        "title": "Anomaly Z-Score",
+        "tag": "4.4",
+        "type": "bar",
+        "indexAxis": "y",
+        "data": [
+          { "cat": "Hydraulics",    "cnt": 4, "z": 7.2 },
+          { "cat": "Undercarriage", "cnt": 3, "z": 5.8 },
+          { "cat": "Transmission",  "cnt": 1, "z": 4.2 },
+          { "cat": "Engine",        "cnt": 2, "z": 3.8 },
+          { "cat": "Filters",       "cnt": 2, "z": 3.1 }
+        ]
+      },
+      "jobsAtRisk": {
+        "chartId": "chOvJobs",
+        "title": "Jobs at Risk by Category",
+        "tag": "stockout impact",
+        "type": "bar",
+        "data": [
+          { "cat": "Undercarriage", "jobs": 34, "sla": 5 },
+          { "cat": "Hydraulics",    "jobs": 28, "sla": 4 },
+          { "cat": "Engine",        "jobs": 18, "sla": 2 },
+          { "cat": "Transmission",  "jobs": 9,  "sla": 1 }
+        ]
+      },
+      "prPoActivity": {
+        "chartId": "chOvPR",
+        "title": "PR/PO Activity — 7 Days",
+        "tag": "4.5 · SAP",
+        "type": "line",
+        "data": [
+          { "d": "Jun 18", "prs": 18, "pos": 9,  "triggers": 28 },
+          { "d": "Jun 19", "prs": 16, "pos": 8,  "triggers": 24 },
+          { "d": "Jun 20", "prs": 21, "pos": 11, "triggers": 31 },
+          { "d": "Jun 21", "prs": 14, "pos": 7,  "triggers": 22 },
+          { "d": "Jun 22", "prs": 9,  "pos": 5,  "triggers": 18 },
+          { "d": "Jun 23", "prs": 19, "pos": 10, "triggers": 29 },
+          { "d": "Jun 24", "prs": 24, "pos": 11, "triggers": 34 }
+        ]
+      }
+    },
+    "heatmap": {
+      "title": "Stockout Risk Heatmap — Branch × Category",
+      "tag": "risk %",
+      "data": [
+        { "branch": "Bangalore",  "cat": "Undercarriage", "risk": 68, "sev": "CRITICAL", "parts": 8 },
+        { "branch": "Bangalore",  "cat": "Hydraulics",    "risk": 74, "sev": "CRITICAL", "parts": 6 },
+        { "branch": "Bangalore",  "cat": "Engine",        "risk": 22, "sev": "LOW",      "parts": 3 },
+        { "branch": "Chennai",    "cat": "Undercarriage", "risk": 55, "sev": "HIGH",     "parts": 7 },
+        { "branch": "Chennai",    "cat": "Filters",       "risk": 18, "sev": "LOW",      "parts": 2 },
+        { "branch": "Hyderabad",  "cat": "Undercarriage", "risk": 81, "sev": "CRITICAL", "parts": 11 },
+        { "branch": "Hyderabad",  "cat": "Hydraulics",    "risk": 76, "sev": "CRITICAL", "parts": 9 },
+        { "branch": "Delhi",      "cat": "Engine",        "risk": 34, "sev": "MEDIUM",   "parts": 5 },
+        { "branch": "Delhi",      "cat": "Transmission",  "risk": 28, "sev": "MEDIUM",   "parts": 4 },
+        { "branch": "Mumbai",     "cat": "Filters",       "risk": 14, "sev": "LOW",      "parts": 2 }
+      ]
+    },
+    "priorityActions": [
+      { "sev": "cr", "title": "38 Critical Stockout Parts",  "sub": "≥70% risk · Auto-PR triggered for 24" },
+      { "sev": "cr", "title": "12 Consumption Anomalies",    "sub": "3 critical (z>4) · 5 PRs blocked pending review" },
+      { "sev": "hi", "title": "89 Jobs at Stockout Risk",    "sub": "12 SLA breach risk · Undercarriage: 34 jobs" },
+      { "sev": "hi", "title": "₹1.24Cr Value at Risk",       "sub": "Procurement urgency: 3 overdue orders" },
+      { "sev": "md", "title": "Monsoon Uplift Active",       "sub": "Hydraulics +30%, Undercarriage +27% — review SS recs" }
+    ]
+  }
+}

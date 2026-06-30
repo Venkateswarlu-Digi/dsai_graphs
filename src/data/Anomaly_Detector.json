@@ -1,0 +1,249 @@
+{
+  "success": true,
+  "message": "Consumption Anomaly Detector dashboard fetched successfully",
+  "result": {
+    "metadata": {
+      "model_name": "consumption_anomaly_detector",
+      "model_version": "v1.0.0",
+      "detection_run_date": "2026-06-24",
+      "granularity": "daily",
+      "generated_timestamp": "2026-06-24T03:45:00",
+      "generated_timestamp_relative": "4h 15m ago",
+      "model_run_id": "RUN-AD-20260624-001",
+      "detection_method": "Z-Score (|z|>2.5 = anomaly, |z|>4.0 = CRITICAL) + Isolation Forest secondary confirmation",
+      "note": "Rule-based statistical model \u2014 no ML training required"
+    },
+    "summary": {
+      "total_parts_monitored": 8420,
+      "anomalies_detected_today": 12,
+      "critical_anomalies": 3,
+      "warning_anomalies": 9,
+      "spike_anomalies": 8,
+      "drop_anomalies": 4,
+      "auto_pr_blocked_due_to_anomaly": 5,
+      "anomalies_pending_review": 7,
+      "anomalies_reviewed_ok_today": 3,
+      "anomalies_escalated": 2,
+      "avg_z_score_critical": 6.8,
+      "data_freshness": "2026-06-24T03:30:00",
+      "data_freshness_relative": "4h 30m ago"
+    },
+    "graph_data": {
+      "anomaly_timeline": [
+        {
+          "detection_date": "2026-06-18",
+          "critical_count": 1,
+          "warning_count": 4,
+          "total_anomalies": 5
+        },
+        {
+          "detection_date": "2026-06-19",
+          "critical_count": 0,
+          "warning_count": 3,
+          "total_anomalies": 3
+        },
+        {
+          "detection_date": "2026-06-20",
+          "critical_count": 2,
+          "warning_count": 5,
+          "total_anomalies": 7
+        },
+        {
+          "detection_date": "2026-06-21",
+          "critical_count": 1,
+          "warning_count": 4,
+          "total_anomalies": 5
+        },
+        {
+          "detection_date": "2026-06-22",
+          "critical_count": 0,
+          "warning_count": 2,
+          "total_anomalies": 2
+        },
+        {
+          "detection_date": "2026-06-23",
+          "critical_count": 1,
+          "warning_count": 3,
+          "total_anomalies": 4
+        },
+        {
+          "detection_date": "2026-06-24",
+          "critical_count": 3,
+          "warning_count": 9,
+          "total_anomalies": 12
+        }
+      ],
+      "anomaly_by_category_bar": [
+        {
+          "category": "Hydraulics",
+          "anomaly_count": 4,
+          "avg_z_score": 7.2,
+          "spike_count": 3,
+          "drop_count": 1
+        },
+        {
+          "category": "Undercarriage",
+          "anomaly_count": 3,
+          "avg_z_score": 5.8,
+          "spike_count": 2,
+          "drop_count": 1
+        },
+        {
+          "category": "Engine",
+          "anomaly_count": 2,
+          "avg_z_score": 3.8,
+          "spike_count": 1,
+          "drop_count": 1
+        },
+        {
+          "category": "Filters",
+          "anomaly_count": 2,
+          "avg_z_score": 3.1,
+          "spike_count": 1,
+          "drop_count": 1
+        },
+        {
+          "category": "Transmission",
+          "anomaly_count": 1,
+          "avg_z_score": 4.2,
+          "spike_count": 1,
+          "drop_count": 0
+        }
+      ],
+      "z_score_distribution_histogram": [
+        {
+          "z_score_band": "2.5 to 3.0",
+          "count": 4,
+          "severity": "WARNING"
+        },
+        {
+          "z_score_band": "3.0 to 4.0",
+          "count": 5,
+          "severity": "WARNING"
+        },
+        {
+          "z_score_band": "4.0 to 6.0",
+          "count": 2,
+          "severity": "CRITICAL"
+        },
+        {
+          "z_score_band": ">6.0",
+          "count": 1,
+          "severity": "CRITICAL"
+        }
+      ],
+      "anomaly_consumption_detail": [
+        {
+          "part_number": "7X-2200",
+          "branch_id": "BR-BLR-01",
+          "detection_date": "2026-06-24",
+          "recent_qty_7d": 40,
+          "rolling_avg_30d": 3.2,
+          "rolling_std_30d": 3.1,
+          "z_score": 11.87,
+          "direction": "SPIKE",
+          "severity": "CRITICAL"
+        },
+        {
+          "part_number": "1R-0750",
+          "branch_id": "BR-DEL-04",
+          "detection_date": "2026-06-24",
+          "recent_qty_7d": 0,
+          "rolling_avg_30d": 36.4,
+          "rolling_std_30d": 4.8,
+          "z_score": -7.58,
+          "direction": "DROP",
+          "severity": "CRITICAL"
+        },
+        {
+          "part_number": "5I-7951",
+          "branch_id": "BR-HYD-03",
+          "detection_date": "2026-06-24",
+          "recent_qty_7d": 18,
+          "rolling_avg_30d": 4.8,
+          "rolling_std_30d": 2.4,
+          "z_score": 5.5,
+          "direction": "SPIKE",
+          "severity": "CRITICAL"
+        },
+        {
+          "part_number": "4T-1234",
+          "branch_id": "BR-CHN-02",
+          "detection_date": "2026-06-24",
+          "recent_qty_7d": 7,
+          "rolling_avg_30d": 2.6,
+          "rolling_std_30d": 1.8,
+          "z_score": 2.44,
+          "direction": "SPIKE",
+          "severity": "WARNING"
+        }
+      ]
+    },
+    "forecast_table": {
+      "CRITICAL": [
+        {
+          "anomaly_id": "ANO-AD-20260624-001",
+          "part_number": "7X-2200",
+          "part_description": "Hydraulic Seal Kit",
+          "part_category": "Hydraulics",
+          "branch_id": "BR-BLR-01",
+          "branch_name": "Bangalore Branch",
+          "detection_date": "2026-06-24",
+          "recent_qty_consumed_7d": 40,
+          "expected_qty_rolling_avg": 3.2,
+          "rolling_std_30d": 3.1,
+          "z_score": 11.87,
+          "anomaly_direction": "SPIKE",
+          "deviation_units": 36.8,
+          "severity": "CRITICAL",
+          "linked_jobs": [
+            "JOB-BLR-19023",
+            "JOB-BLR-19024",
+            "JOB-BLR-19041"
+          ],
+          "possible_cause_hint": "Bulk consumption across 3 jobs in one week \u2014 likely bulk stock transfer or data entry error. Check WO-2024-BLR-88305.",
+          "review_status": "PENDING",
+          "auto_pr_blocked": true,
+          "model_version": "v1.0.0",
+          "detection_timestamp": "2026-06-24T03:45:00",
+          "actions": {
+            "can_view_detail": true,
+            "can_approve_pr": true,
+            "can_mark_reviewed": true,
+            "can_escalate": true,
+            "can_export": true
+          }
+        },
+        {
+          "anomaly_id": "ANO-AD-20260624-002",
+          "part_number": "1R-0750",
+          "part_description": "Engine Oil Filter",
+          "part_category": "Engine / Filters",
+          "branch_id": "BR-DEL-04",
+          "branch_name": "Delhi Branch",
+          "detection_date": "2026-06-24",
+          "recent_qty_consumed_7d": 0,
+          "expected_qty_rolling_avg": 36.4,
+          "rolling_std_30d": 4.8,
+          "z_score": -7.58,
+          "anomaly_direction": "DROP",
+          "deviation_units": -36.4,
+          "severity": "CRITICAL",
+          "linked_jobs": [],
+          "possible_cause_hint": "Zero consumption this week vs 36.4 avg \u2014 possible branch shutdown, telematics outage, or all jobs on hold. Verify branch operational status.",
+          "review_status": "ESCALATED",
+          "auto_pr_blocked": false,
+          "model_version": "v1.0.0",
+          "detection_timestamp": "2026-06-24T03:45:00",
+          "actions": {
+            "can_view_detail": true,
+            "can_approve_pr": false,
+            "can_mark_reviewed": true,
+            "can_escalate": false,
+            "can_export": true
+          }
+        }
+      ]
+    }
+  }
+}

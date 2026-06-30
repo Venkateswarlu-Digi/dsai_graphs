@@ -1,0 +1,363 @@
+{
+  "success": true,
+  "message": "SAP PR/PO & Parts Intelligence Integration (5.9) dashboard fetched successfully",
+  "result": {
+    "metadata": {
+      "model_name": "sap_pr_po_parts_intelligence",
+      "model_version": "v1.0.0",
+      "run_date": "2026-06-24",
+      "granularity": "daily",
+      "generated_timestamp": "2026-06-24T04:00:00",
+      "generated_timestamp_relative": "4h ago",
+      "model_run_id": "RUN-SAP-20260624-001",
+      "upstream_dependencies": [
+        "Sub-Model 4.1 (predicted_qty)",
+        "Sub-Model 4.2 (stockout_risk_pct)",
+        "Sub-Model 4.3 (rec_order_qty, rec_order_date)",
+        "Sub-Model 4.4 (anomaly_flag)"
+      ],
+      "sap_integration": "BAPI_PR_CREATE + SAP MM real-time inventory API + GRN acknowledgement webhook"
+    },
+    "summary": {
+      "sap_prs_auto_raised_today": 24,
+      "sap_prs_pending_human_approval": 8,
+      "sap_prs_blocked_anomaly": 5,
+      "sap_pos_raised_today": 11,
+      "total_po_value_today_inr": 8640000,
+      "parts_readiness_triggers_sent": 34,
+      "jobs_advanced_to_next_stage": 34,
+      "real_time_availability_queries_today": 1820,
+      "eta_predictions_served": 142,
+      "shortage_alerts_sent": 38,
+      "avg_eta_accuracy_pct": 88.4,
+      "sap_api_uptime_pct": 99.8,
+      "data_freshness": "2026-06-24T03:45:00",
+      "data_freshness_relative": "4h 15m ago"
+    },
+    "graph_data": {
+      "pr_po_activity_timeline": [
+        {
+          "date": "2026-06-18",
+          "prs_auto_raised": 18,
+          "prs_human_approved": 14,
+          "pos_raised": 9,
+          "parts_readiness_triggers": 28
+        },
+        {
+          "date": "2026-06-19",
+          "prs_auto_raised": 16,
+          "prs_human_approved": 12,
+          "pos_raised": 8,
+          "parts_readiness_triggers": 24
+        },
+        {
+          "date": "2026-06-20",
+          "prs_auto_raised": 21,
+          "prs_human_approved": 17,
+          "pos_raised": 11,
+          "parts_readiness_triggers": 31
+        },
+        {
+          "date": "2026-06-21",
+          "prs_auto_raised": 14,
+          "prs_human_approved": 10,
+          "pos_raised": 7,
+          "parts_readiness_triggers": 22
+        },
+        {
+          "date": "2026-06-22",
+          "prs_auto_raised": 9,
+          "prs_human_approved": 8,
+          "pos_raised": 5,
+          "parts_readiness_triggers": 18
+        },
+        {
+          "date": "2026-06-23",
+          "prs_auto_raised": 19,
+          "prs_human_approved": 15,
+          "pos_raised": 10,
+          "parts_readiness_triggers": 29
+        },
+        {
+          "date": "2026-06-24",
+          "prs_auto_raised": 24,
+          "prs_human_approved": null,
+          "pos_raised": 11,
+          "parts_readiness_triggers": 34
+        }
+      ],
+      "real_time_inventory_availability": [
+        {
+          "part_number": "4T-1234",
+          "branch_id": "BR-HSR-02",
+          "stock_on_hand": 8,
+          "reserved_qty": 2,
+          "effective_available": 6,
+          "open_po_qty": 0,
+          "eta_next_delivery": "2026-07-05",
+          "availability_status": "CRITICAL"
+        },
+        {
+          "part_number": "1R-0750",
+          "branch_id": "BR-HSR-02",
+          "stock_on_hand": 34,
+          "reserved_qty": 6,
+          "effective_available": 28,
+          "open_po_qty": 12,
+          "eta_next_delivery": "2026-06-28",
+          "availability_status": "SUFFICIENT"
+        },
+        {
+          "part_number": "7X-2200",
+          "branch_id": "BR-BLR-01",
+          "stock_on_hand": 2,
+          "reserved_qty": 0,
+          "effective_available": 2,
+          "open_po_qty": 6,
+          "eta_next_delivery": "2026-07-08",
+          "availability_status": "CRITICAL"
+        },
+        {
+          "part_number": "5I-7951",
+          "branch_id": "BR-HYD-03",
+          "stock_on_hand": 5,
+          "reserved_qty": 1,
+          "effective_available": 4,
+          "open_po_qty": 0,
+          "eta_next_delivery": null,
+          "availability_status": "CRITICAL"
+        }
+      ],
+      "parts_readiness_status_by_job": [
+        {
+          "job_id": "JOB-HSR-19022",
+          "wo_id": "WO-2024-HSR-88219",
+          "branch_id": "BR-HSR-02",
+          "parts_total": 4,
+          "parts_available": 4,
+          "parts_on_order": 0,
+          "parts_missing": 0,
+          "readiness_status": "READY",
+          "trigger_sent": true,
+          "next_stage": "Reassembly"
+        },
+        {
+          "job_id": "JOB-BLR-19023",
+          "wo_id": "WO-2024-BLR-88305",
+          "branch_id": "BR-BLR-01",
+          "parts_total": 3,
+          "parts_available": 1,
+          "parts_on_order": 1,
+          "parts_missing": 1,
+          "readiness_status": "BLOCKED",
+          "trigger_sent": false,
+          "next_stage": "Pending Parts",
+          "blocking_part": "7X-2200"
+        },
+        {
+          "job_id": "JOB-DEL-19024",
+          "wo_id": "WO-2024-DEL-88410",
+          "branch_id": "BR-DEL-03",
+          "parts_total": 12,
+          "parts_available": 10,
+          "parts_on_order": 2,
+          "parts_missing": 0,
+          "readiness_status": "PARTIAL",
+          "trigger_sent": false,
+          "next_stage": "Awaiting 2 Parts \u2014 ETA 2026-06-28"
+        },
+        {
+          "job_id": "JOB-CHN-19025",
+          "wo_id": "WO-2024-CHN-88451",
+          "branch_id": "BR-CHN-02",
+          "parts_total": 6,
+          "parts_available": 6,
+          "parts_on_order": 0,
+          "parts_missing": 0,
+          "readiness_status": "READY",
+          "trigger_sent": true,
+          "next_stage": "Quality Check"
+        }
+      ],
+      "eta_prediction_accuracy": [
+        {
+          "vendor_id": "V-0231",
+          "vendor_name": "TrackTech Industries",
+          "predicted_eta_avg_days": 23.4,
+          "actual_eta_avg_days": 24.1,
+          "accuracy_pct": 97.1,
+          "on_time_pct": 87.4
+        },
+        {
+          "vendor_id": "V-0118",
+          "vendor_name": "FilterPro Supplies",
+          "predicted_eta_avg_days": 6.1,
+          "actual_eta_avg_days": 6.3,
+          "accuracy_pct": 96.8,
+          "on_time_pct": 96.1
+        },
+        {
+          "vendor_id": "V-0309",
+          "vendor_name": "HydroSeal Co",
+          "predicted_eta_avg_days": 16.8,
+          "actual_eta_avg_days": 19.2,
+          "accuracy_pct": 87.5,
+          "on_time_pct": 79.0
+        },
+        {
+          "vendor_id": "V-0445",
+          "vendor_name": "CatParts Direct",
+          "predicted_eta_avg_days": 9.2,
+          "actual_eta_avg_days": 9.4,
+          "accuracy_pct": 97.9,
+          "on_time_pct": 94.5
+        }
+      ],
+      "shortage_alerts_by_severity": [
+        {
+          "severity": "CRITICAL",
+          "count": 38,
+          "auto_notified": 38,
+          "sla_jobs_impacted": 12
+        },
+        {
+          "severity": "HIGH",
+          "count": 62,
+          "auto_notified": 62,
+          "sla_jobs_impacted": 4
+        },
+        {
+          "severity": "MEDIUM",
+          "count": 43,
+          "auto_notified": 43,
+          "sla_jobs_impacted": 0
+        },
+        {
+          "severity": "LOW",
+          "count": 0,
+          "auto_notified": 0,
+          "sla_jobs_impacted": 0
+        }
+      ],
+      "consumption_analytics_category_trend": [
+        {
+          "period_date": "2026-06-10",
+          "Engine": 8240,
+          "Undercarriage": 6180,
+          "Hydraulics": 5420,
+          "Filters": 5080,
+          "Transmission": 2640
+        },
+        {
+          "period_date": "2026-06-17",
+          "Engine": 8640,
+          "Undercarriage": 6480,
+          "Hydraulics": 5720,
+          "Filters": 5240,
+          "Transmission": 2780
+        },
+        {
+          "period_date": "2026-06-24",
+          "Engine": 9040,
+          "Undercarriage": 6840,
+          "Hydraulics": 6120,
+          "Filters": 5480,
+          "Transmission": 2920
+        },
+        {
+          "period_date": "2026-07-01",
+          "Engine": 9200,
+          "Undercarriage": 7200,
+          "Hydraulics": 6800,
+          "Filters": 5600,
+          "Transmission": 3000
+        }
+      ]
+    },
+    "forecast_table": {
+      "AUTO_PR_RAISED": [
+        {
+          "pr_id": "PR-SAP-20260624-001",
+          "alert_id": "ALT-SR-001",
+          "part_number": "7X-2200",
+          "part_description": "Hydraulic Seal Kit",
+          "branch_id": "BR-BLR-01",
+          "branch_name": "Bangalore Branch",
+          "vendor_id": "V-0309",
+          "vendor_name": "HydroSeal Co",
+          "rec_order_qty": 17,
+          "rec_order_date": "2026-06-15",
+          "order_status": "URGENT",
+          "stockout_risk_pct": 74.0,
+          "sap_pr_status": "CREATED",
+          "sap_pr_created_at": "2026-06-24T04:02:00",
+          "approval_required": false,
+          "pr_value_inr": 21080,
+          "eta_if_ordered_today": "2026-07-08",
+          "model_version": "v1.0.0",
+          "actions": {
+            "can_view_sap_pr": true,
+            "can_cancel_pr": true,
+            "can_expedite": true,
+            "can_export": true
+          }
+        },
+        {
+          "pr_id": "PR-SAP-20260624-002",
+          "alert_id": "ALT-SR-002",
+          "part_number": "5I-7951",
+          "part_description": "Hydraulic Piston Seal",
+          "branch_id": "BR-HYD-03",
+          "branch_name": "Hyderabad Branch",
+          "vendor_id": "V-0309",
+          "vendor_name": "HydroSeal Co",
+          "rec_order_qty": 18,
+          "rec_order_date": "2026-06-10",
+          "order_status": "URGENT",
+          "stockout_risk_pct": 61.0,
+          "sap_pr_status": "CREATED",
+          "sap_pr_created_at": "2026-06-24T04:02:01",
+          "approval_required": false,
+          "pr_value_inr": 43200,
+          "eta_if_ordered_today": "2026-07-15",
+          "model_version": "v1.0.0",
+          "actions": {
+            "can_view_sap_pr": true,
+            "can_cancel_pr": true,
+            "can_expedite": true,
+            "can_export": true
+          }
+        }
+      ],
+      "PENDING_HUMAN_APPROVAL": [
+        {
+          "pr_id": "PR-SAP-20260624-003",
+          "alert_id": "ALT-SR-003",
+          "part_number": "4T-1234",
+          "part_description": "Track Link Assembly",
+          "branch_id": "BR-HYD-03",
+          "branch_name": "Hyderabad Branch",
+          "vendor_id": "V-0231",
+          "vendor_name": "TrackTech Industries",
+          "rec_order_qty": 51,
+          "rec_order_date": "2026-06-03",
+          "order_status": "URGENT \u2014 OVERDUE 21 DAYS",
+          "stockout_risk_pct": 68.0,
+          "sap_pr_status": "BLOCKED_ANOMALY",
+          "block_reason": "Anomaly z_score=2.9 on recent consumption \u2014 human must review before PR is raised",
+          "anomaly_id": "ANO-AD-20260624-003",
+          "pr_value_inr": 940350,
+          "eta_if_ordered_today": "2026-07-18",
+          "model_version": "v1.0.0",
+          "actions": {
+            "can_view_sap_pr": true,
+            "can_approve_pr": true,
+            "can_reject_pr": true,
+            "can_expedite": true,
+            "can_export": true
+          }
+        }
+      ]
+    }
+  }
+}

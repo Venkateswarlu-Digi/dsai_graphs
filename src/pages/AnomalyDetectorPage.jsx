@@ -1,0 +1,162 @@
+import '../styles/dashboard.css';
+import anomalyJson from '../data/Anomaly_Detector.json';
+import Sidebar from '../components/Sidebar';
+import Header from '../components/Header';
+import KPICard from '../components/KPICard';
+import ChartCard from '../components/ChartCard';
+import DynamicChart from '../assets/charts/DynamicChart';
+
+const branches = {
+  'BR-BLR-01': 'Bangalore',
+  'BR-DEL-04': 'Delhi',
+  'BR-HYD-03': 'Hyderabad',
+  'BR-CHN-02': 'Chennai',
+};
+
+const fallbackParts = {
+  '5I-7951': ['Hydraulic Piston Seal', 'Hydraulics'],
+  '4T-1234': ['Track Link Assembly', 'Undercarriage'],
+};
+
+const dateLabel = value => new Date(`${value}T00:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+export default function AnomalyDetectorPage({ onNavigate }) {
+  const { metadata, summary, graph_data: graphs, forecast_table: table } = anomalyJson.result;
+  const criticalDetails = Object.fromEntries(table.CRITICAL.map(row => [row.part_number, row]));
+  const anomalies = graphs.anomaly_consumption_detail.map((item, index) => ({
+    anomaly_id: `ANO-AD-${String(index + 1).padStart(3, '0')}`,
+    part_description: fallbackParts[item.part_number]?.[0] ?? 'Monitored Part',
+    part_category: fallbackParts[item.part_number]?.[1] ?? 'Parts',
+    branch_name: `${branches[item.branch_id]} Branch`,
+    review_status: item.severity === 'CRITICAL' ? 'PENDING' : 'REVIEW',
+    auto_pr_blocked: item.severity === 'CRITICAL' && item.direction === 'SPIKE',
+    possible_cause_hint: item.direction === 'SPIKE'
+      ? 'Unusual consumption spike detected. Validate jobs and branch stock movement before approving replenishment.'
+      : 'Unexpected consumption drop. Verify branch operations, telemetry and held jobs.',
+    ...item,
+    ...criticalDetails[item.part_number],
+  }));
+
+  const kpis = [
+    { label: 'Anomalies Today', value: summary.anomalies_detected_today, delta: `avg critical z-score: ${summary.avg_z_score_critical}`, type: 'alert', deltaDir: 'down' },
+    { label: 'Critical Anomalies', value: summary.critical_anomalies, delta: `z > 4.0 · immediate review`, type: 'alert', deltaDir: 'down' },
+    { label: 'PRs Blocked', value: summary.auto_pr_blocked_due_to_anomaly, delta: 'auto-PR held pending review', type: 'alert-amb', deltaDir: 'warn' },
+    { label: 'Reviewed OK Today', value: summary.anomalies_reviewed_ok_today, delta: `${summary.anomalies_escalated} escalated · ${summary.anomalies_pending_review} pending`, deltaDir: 'up' },
+  ];
+
+  return (
+    <div className="shell anomaly-shell">
+      <Sidebar active="anomaly" onNavigate={onNavigate} />
+      <main className="main anomaly-page">
+        <Header
+          title="Anomaly Detector — Sub-model 4.4"
+          subtitle="Z-Score + Isolation Forest · |z| > 2.5 = anomaly"
+        />
+
+        <div className="anomaly-content">
+          <div className="anomaly-intro">
+            <div>
+              <h2>Consumption Anomaly Detector — Sub-model 4.4</h2>
+              <p>Z-Score (|z| &gt; 2.5 = anomaly, |z| &gt; 4 critical) with Isolation Forest secondary confirmation. Anomalies block auto-PRs until human review.</p>
+            </div>
+            <span className="method-badge ml"><i /> Z-Score + Isolation Forest</span>
+          </div>
+
+          <div className="kpis anomaly-kpis">{kpis.map(kpi => <KPICard key={kpi.label} {...kpi} />)}</div>
+
+          <div className="anomaly-chart-grid">
+            <ChartCard title="Anomaly Timeline — 7 Days" tag="daily · stacked" height="sm">
+              <DynamicChart
+                stacked
+                labels={graphs.anomaly_timeline.map(item => dateLabel(item.detection_date))}
+                datasets={[
+                  { label: 'Critical', data: graphs.anomaly_timeline.map(item => item.critical_count), backgroundColor: '#ef5a5acc' },
+                  { label: 'Warning', data: graphs.anomaly_timeline.map(item => item.warning_count), backgroundColor: '#a78bfacc' },
+                ]}
+              />
+            </ChartCard>
+            <ChartCard title="Anomalies by Category" tag="avg z-score" height="sm">
+              <DynamicChart
+                labels={graphs.anomaly_by_category_bar.map(item => item.category)}
+                datasets={[{
+                  label: 'Average Z-Score',
+                  data: graphs.anomaly_by_category_bar.map(item => item.avg_z_score),
+                  backgroundColor: graphs.anomaly_by_category_bar.map(item => item.avg_z_score > 4 ? '#ef5a5acc' : '#a78bfacc'),
+                }]}
+              />
+            </ChartCard>
+            <ChartCard title="Z-Score Distribution" tag="histogram" height="sm">
+              <DynamicChart
+                labels={graphs.z_score_distribution_histogram.map(item => item.z_score_band)}
+                datasets={[{
+                  label: 'Count',
+                  data: graphs.z_score_distribution_histogram.map(item => item.count),
+                  backgroundColor: graphs.z_score_distribution_histogram.map(item => item.severity === 'CRITICAL' ? '#ef5a5acc' : '#a78bfacc'),
+                }]}
+              />
+            </ChartCard>
+          </div>
+
+          <div className="panel anomaly-action-panel">
+            <h3>Critical Anomalies — Requires Immediate Action <span className="tag">{summary.anomalies_escalated} escalated · {summary.anomalies_pending_review} pending</span></h3>
+            {anomalies.filter(item => item.severity === 'CRITICAL').map(item => (
+              <div className="anomaly-action-row" key={item.anomaly_id}>
+                <span className="anomaly-pulse" />
+                <div className="anomaly-action-copy">
+                  <strong>{item.anomaly_id} · {item.part_number} — {item.part_description} [{branches[item.branch_id]}]</strong>
+                  <span>Direction: {item.anomaly_direction ?? item.direction} · Consumed 7d: {item.recent_qty_consumed_7d ?? item.recent_qty_7d} · Expected avg: {item.expected_qty_rolling_avg ?? item.rolling_avg_30d} · Z-Score: <b>{item.z_score}</b></span>
+                  <p>⚠ {item.possible_cause_hint}</p>
+                </div>
+                <div className="anomaly-statuses">
+                  <span className="table-badge critical">{item.severity}</span>
+                  <span className={`table-badge ${item.review_status.toLowerCase()}`}>{item.review_status}</span>
+                  {item.auto_pr_blocked && <span className="table-badge blocked-anomaly">PR BLOCKED</span>}
+                </div>
+                <div className="anomaly-actions">
+                  {item.auto_pr_blocked && <button className="table-action">✓ Approve PR</button>}
+                  <button className="table-action muted">Mark Reviewed</button>
+                  <button className="table-action danger">Escalate</button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="panel anomaly-table-panel">
+            <h3>All Anomalies — Detailed View <span className="tag">primary_table</span></h3>
+            <div className="data-table-wrap">
+              <table className="data-table anomaly-table">
+                <thead>
+                  <tr><th>#</th><th>Anomaly ID</th><th>Part</th><th>Branch</th><th>Category</th><th>Consumed 7d</th><th>Expected (30d avg)</th><th>Z Score</th><th>Direction</th><th>Severity</th><th>PR Blocked</th><th>Review Status</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                  {anomalies.map((item, index) => (
+                    <tr key={item.anomaly_id}>
+                      <td>{index + 1}</td>
+                      <td className="anomaly-id">{item.anomaly_id}</td>
+                      <td><strong>{item.part_number}</strong><small>{item.part_description}</small></td>
+                      <td>{item.branch_name.replace(' Branch', '')}</td>
+                      <td><span className="category-chip">{item.part_category}</span></td>
+                      <td className={item.direction === 'DROP' || item.anomaly_direction === 'DROP' ? 'good-text' : 'danger-text'}>{item.recent_qty_consumed_7d ?? item.recent_qty_7d}</td>
+                      <td>{item.expected_qty_rolling_avg ?? item.rolling_avg_30d}</td>
+                      <td><span className={`z-chip ${Math.abs(item.z_score) > 4 ? 'critical' : 'warning'}`}>{item.z_score}</span></td>
+                      <td><span className={`table-badge ${(item.anomaly_direction ?? item.direction).toLowerCase()}`}>{item.anomaly_direction ?? item.direction}</span></td>
+                      <td><span className={`table-badge ${item.severity.toLowerCase()}`}>{item.severity}</span></td>
+                      <td><span className={`table-badge ${item.auto_pr_blocked ? 'blocked-anomaly' : 'created'}`}>{item.auto_pr_blocked ? 'BLOCKED' : 'No'}</span></td>
+                      <td><span className={`table-badge ${item.review_status.toLowerCase()}`}>{item.review_status}</span></td>
+                      <td>{item.auto_pr_blocked && <button className="table-action">✓ Approve PR</button>} <button className="table-action muted">Review</button></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="foot-note">
+            <span>model_name: {metadata.model_name} · model_version: {metadata.model_version}</span>
+            <span>method: z_score + isolation_anomaly · |z|&gt;4=critical · secondary: isolation_forest</span>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}

@@ -1,0 +1,607 @@
+{
+  "success": true,
+  "message": "Part-Level Demand Forecast Model dashboard fetched successfully",
+  "result": {
+    "metadata": {
+      "model_name": "part_level_demand_forecast",
+      "model_version": "v1.0.0",
+      "forecast_run_date": "2026-06-24",
+      "forecast_period": "2026-06-24 to 2026-09-21",
+      "granularity": "weekly",
+      "generated_timestamp": "2026-06-24T03:00:00",
+      "generated_timestamp_relative": "5h ago",
+      "confidence_level": "80%",
+      "forecast_horizons": [
+        30,
+        60,
+        90
+      ],
+      "input_dataset_ref": "gold_parts_demand_input_v20260624",
+      "model_run_id": "RUN-PD-20260624-001",
+      "upstream_dependency": "6.2 Workload Forecasting Engine \u2014 job count by category (fcst_job_count_category_30d)",
+      "sub_models_used": [
+        "TIMESERIES_LIGHTGBM",
+        "REGRESSION_ON_6.2",
+        "SIMILARITY_kNN"
+      ]
+    },
+    "summary": {
+      "total_parts_forecasted": 8420,
+      "total_branches_covered": 12,
+      "total_predicted_units_30d": 142800,
+      "total_predicted_units_60d": 271400,
+      "total_predicted_units_90d": 389600,
+      "total_forecast_value_inr_30d": 48600000,
+      "total_forecast_value_inr_60d": 92400000,
+      "total_forecast_value_inr_90d": 132800000,
+      "parts_at_stockout_risk_30d": 143,
+      "parts_critical_stockout": 38,
+      "parts_high_stockout": 62,
+      "parts_medium_stockout": 43,
+      "fast_movers_count": 3240,
+      "medium_movers_count": 2810,
+      "slow_movers_count": 1890,
+      "dead_stock_count": 480,
+      "anomaly_flags_active": 12,
+      "model_accuracy": {
+        "mape_fast_movers": 8.2,
+        "mape_slow_movers": 14.6,
+        "wape_overall": 9.4,
+        "forecast_accuracy_pct": 91.8
+      },
+      "monsoon_impact_flag": true,
+      "monsoon_uplift_categories": [
+        "Hydraulics",
+        "Undercarriage"
+      ],
+      "data_freshness": "2026-06-24T02:45:00",
+      "data_freshness_relative": "5h 15m ago"
+    },
+    "graph_data": {
+      "demand_trend_line_all_parts": [
+        {
+          "period_date": "2026-06-10",
+          "predicted_units": 9820,
+          "actual_units": 9640,
+          "is_forecast": false,
+          "confidence_low": null,
+          "confidence_high": null
+        },
+        {
+          "period_date": "2026-06-17",
+          "predicted_units": 10140,
+          "actual_units": 10280,
+          "is_forecast": false,
+          "confidence_low": null,
+          "confidence_high": null
+        },
+        {
+          "period_date": "2026-06-24",
+          "predicted_units": 10650,
+          "actual_units": null,
+          "is_forecast": true,
+          "confidence_low": 9800,
+          "confidence_high": 11500
+        },
+        {
+          "period_date": "2026-07-01",
+          "predicted_units": 11200,
+          "actual_units": null,
+          "is_forecast": true,
+          "confidence_low": 10300,
+          "confidence_high": 12100
+        },
+        {
+          "period_date": "2026-07-08",
+          "predicted_units": 12400,
+          "actual_units": null,
+          "is_forecast": true,
+          "confidence_low": 11400,
+          "confidence_high": 13400
+        },
+        {
+          "period_date": "2026-07-15",
+          "predicted_units": 13100,
+          "actual_units": null,
+          "is_forecast": true,
+          "confidence_low": 12000,
+          "confidence_high": 14200
+        },
+        {
+          "period_date": "2026-07-22",
+          "predicted_units": 12800,
+          "actual_units": null,
+          "is_forecast": true,
+          "confidence_low": 11700,
+          "confidence_high": 13900
+        },
+        {
+          "period_date": "2026-07-29",
+          "predicted_units": 11900,
+          "actual_units": null,
+          "is_forecast": true,
+          "confidence_low": 10900,
+          "confidence_high": 12900
+        },
+        {
+          "period_date": "2026-08-05",
+          "predicted_units": 11400,
+          "actual_units": null,
+          "is_forecast": true,
+          "confidence_low": 10400,
+          "confidence_high": 12400
+        },
+        {
+          "period_date": "2026-08-12",
+          "predicted_units": 10900,
+          "actual_units": null,
+          "is_forecast": true,
+          "confidence_low": 10000,
+          "confidence_high": 11800
+        },
+        {
+          "period_date": "2026-08-19",
+          "predicted_units": 10600,
+          "actual_units": null,
+          "is_forecast": true,
+          "confidence_low": 9700,
+          "confidence_high": 11500
+        },
+        {
+          "period_date": "2026-08-26",
+          "predicted_units": 10200,
+          "actual_units": null,
+          "is_forecast": true,
+          "confidence_low": 9300,
+          "confidence_high": 11100
+        },
+        {
+          "period_date": "2026-09-02",
+          "predicted_units": 9800,
+          "actual_units": null,
+          "is_forecast": true,
+          "confidence_low": 8900,
+          "confidence_high": 10700
+        }
+      ],
+      "demand_by_category_bar": [
+        {
+          "category": "Engine",
+          "predicted_units_30d": 38400,
+          "predicted_units_60d": 73200,
+          "predicted_units_90d": 105600,
+          "pct_of_total": 27.0
+        },
+        {
+          "category": "Undercarriage",
+          "predicted_units_30d": 29800,
+          "predicted_units_60d": 57400,
+          "predicted_units_90d": 82800,
+          "pct_of_total": 20.9
+        },
+        {
+          "category": "Hydraulics",
+          "predicted_units_30d": 26400,
+          "predicted_units_60d": 50400,
+          "predicted_units_90d": 72600,
+          "pct_of_total": 18.5
+        },
+        {
+          "category": "Filters",
+          "predicted_units_30d": 24600,
+          "predicted_units_60d": 46800,
+          "predicted_units_90d": 67200,
+          "pct_of_total": 17.2
+        },
+        {
+          "category": "Transmission",
+          "predicted_units_30d": 12800,
+          "predicted_units_60d": 24400,
+          "predicted_units_90d": 35200,
+          "pct_of_total": 9.0
+        },
+        {
+          "category": "Brakes",
+          "predicted_units_30d": 7200,
+          "predicted_units_60d": 13800,
+          "predicted_units_90d": 19800,
+          "pct_of_total": 5.1
+        },
+        {
+          "category": "Electrical",
+          "predicted_units_30d": 3600,
+          "predicted_units_60d": 5400,
+          "predicted_units_90d": 6400,
+          "pct_of_total": 2.3
+        }
+      ],
+      "demand_by_branch_bar": [
+        {
+          "branch_id": "BR-BLR-01",
+          "branch_name": "Bangalore Branch",
+          "predicted_units_30d": 22400,
+          "predicted_value_inr_30d": 7600000,
+          "at_risk_parts": 28,
+          "load_status": "HIGH"
+        },
+        {
+          "branch_id": "BR-CHN-02",
+          "branch_name": "Chennai Branch",
+          "predicted_units_30d": 19800,
+          "predicted_value_inr_30d": 6700000,
+          "at_risk_parts": 22,
+          "load_status": "HIGH"
+        },
+        {
+          "branch_id": "BR-HYD-03",
+          "branch_name": "Hyderabad Branch",
+          "predicted_units_30d": 17600,
+          "predicted_value_inr_30d": 5900000,
+          "at_risk_parts": 31,
+          "load_status": "CRITICAL"
+        },
+        {
+          "branch_id": "BR-DEL-04",
+          "branch_name": "Delhi Branch",
+          "predicted_units_30d": 16400,
+          "predicted_value_inr_30d": 5500000,
+          "at_risk_parts": 18,
+          "load_status": "MEDIUM"
+        },
+        {
+          "branch_id": "BR-MUM-05",
+          "branch_name": "Mumbai Branch",
+          "predicted_units_30d": 14800,
+          "predicted_value_inr_30d": 5000000,
+          "at_risk_parts": 16,
+          "load_status": "MEDIUM"
+        },
+        {
+          "branch_id": "BR-NAG-10",
+          "branch_name": "Nagpur Branch",
+          "predicted_units_30d": 9200,
+          "predicted_value_inr_30d": 3100000,
+          "at_risk_parts": 11,
+          "load_status": "LOW"
+        }
+      ],
+      "model_family_distribution_donut": [
+        {
+          "label": "TIMESERIES_LIGHTGBM",
+          "value": 5240,
+          "pct": 62.2,
+          "description": "Parts with \u226512 months history and \u22655 events/month"
+        },
+        {
+          "label": "REGRESSION_ON_6.2",
+          "value": 2380,
+          "pct": 28.3,
+          "description": "Parts with sparse history but \u226510 machine fitments"
+        },
+        {
+          "label": "SIMILARITY_kNN",
+          "value": 800,
+          "pct": 9.5,
+          "description": "New or rarely used parts \u2014 <3 events ever"
+        }
+      ],
+      "movement_class_donut": [
+        {
+          "label": "FAST",
+          "value": 3240,
+          "pct": 38.5
+        },
+        {
+          "label": "MEDIUM",
+          "value": 2810,
+          "pct": 33.4
+        },
+        {
+          "label": "SLOW",
+          "value": 1890,
+          "pct": 22.4
+        },
+        {
+          "label": "DEAD",
+          "value": 480,
+          "pct": 5.7
+        }
+      ],
+      "monsoon_demand_uplift": [
+        {
+          "category": "Hydraulics",
+          "baseline_units_30d": 20300,
+          "monsoon_uplift_pct": 30.0,
+          "monsoon_predicted_units_30d": 26400
+        },
+        {
+          "category": "Undercarriage",
+          "baseline_units_30d": 23000,
+          "monsoon_uplift_pct": 29.6,
+          "monsoon_predicted_units_30d": 29800
+        },
+        {
+          "category": "Filters",
+          "baseline_units_30d": 22800,
+          "monsoon_uplift_pct": 7.9,
+          "monsoon_predicted_units_30d": 24600
+        },
+        {
+          "category": "Engine",
+          "baseline_units_30d": 37200,
+          "monsoon_uplift_pct": 3.2,
+          "monsoon_predicted_units_30d": 38400
+        }
+      ],
+      "forecast_vs_actual_accuracy": [
+        {
+          "period_date": "2026-05-01",
+          "actual_units": 9240,
+          "predicted_units": 9580,
+          "abs_error": 340,
+          "pct_error": 3.7
+        },
+        {
+          "period_date": "2026-05-08",
+          "actual_units": 9860,
+          "predicted_units": 9710,
+          "abs_error": 150,
+          "pct_error": 1.5
+        },
+        {
+          "period_date": "2026-05-15",
+          "actual_units": 10420,
+          "predicted_units": 10940,
+          "abs_error": 520,
+          "pct_error": 5.0
+        },
+        {
+          "period_date": "2026-05-22",
+          "actual_units": 9780,
+          "predicted_units": 9420,
+          "abs_error": 360,
+          "pct_error": 3.7
+        },
+        {
+          "period_date": "2026-05-29",
+          "actual_units": 9120,
+          "predicted_units": 8940,
+          "abs_error": 180,
+          "pct_error": 2.0
+        },
+        {
+          "period_date": "2026-06-05",
+          "actual_units": 9640,
+          "predicted_units": 9980,
+          "abs_error": 340,
+          "pct_error": 3.5
+        },
+        {
+          "period_date": "2026-06-17",
+          "actual_units": 10280,
+          "predicted_units": 10140,
+          "abs_error": 140,
+          "pct_error": 1.4
+        }
+      ],
+      "horizon_comparison_bar": [
+        {
+          "label": "30-Day Forecast",
+          "total_units": 142800,
+          "avg_confidence": 0.89,
+          "avg_confidence_pct": "89%",
+          "mape": 8.2
+        },
+        {
+          "label": "60-Day Forecast",
+          "total_units": 271400,
+          "avg_confidence": 0.83,
+          "avg_confidence_pct": "83%",
+          "mape": 11.4
+        },
+        {
+          "label": "90-Day Forecast",
+          "total_units": 389600,
+          "avg_confidence": 0.76,
+          "avg_confidence_pct": "76%",
+          "mape": 14.6
+        }
+      ],
+      "6_2_job_count_vs_parts_demand_correlation": [
+        {
+          "period_date": "2026-06-24",
+          "fcst_job_count_30d": 4820,
+          "predicted_parts_units_30d": 142800,
+          "avg_parts_per_job": 29.6
+        },
+        {
+          "period_date": "2026-07-01",
+          "fcst_job_count_30d": 5100,
+          "predicted_parts_units_30d": 151000,
+          "avg_parts_per_job": 29.6
+        },
+        {
+          "period_date": "2026-07-08",
+          "fcst_job_count_30d": 5640,
+          "predicted_parts_units_30d": 166900,
+          "avg_parts_per_job": 29.6
+        },
+        {
+          "period_date": "2026-07-15",
+          "fcst_job_count_30d": 5880,
+          "predicted_parts_units_30d": 174000,
+          "avg_parts_per_job": 29.6
+        },
+        {
+          "period_date": "2026-07-22",
+          "fcst_job_count_30d": 5420,
+          "predicted_parts_units_30d": 160400,
+          "avg_parts_per_job": 29.6
+        }
+      ]
+    },
+    "forecast_table": {
+      "CRITICAL": [
+        {
+          "prediction_id": "PRED-PD-20260624-HYD-4T1234-001",
+          "part_number": "4T-1234",
+          "part_description": "Track Link Assembly",
+          "part_category": "Undercarriage",
+          "branch_id": "BR-HYD-03",
+          "branch_name": "Hyderabad Branch",
+          "forecast_horizon_days": 30,
+          "period_date": "2026-07-08",
+          "predicted_qty": 47.0,
+          "predicted_qty_p10": 38.0,
+          "predicted_qty_p90": 56.0,
+          "stock_on_hand": 8,
+          "effective_available": 6,
+          "days_of_cover": 5.3,
+          "vendor_lead_time_days": 21,
+          "stockout_risk_pct": 68.0,
+          "risk_status": "CRITICAL",
+          "movement_class": "FAST",
+          "consumption_trend_direction": "UP",
+          "trend_magnitude": 2.6,
+          "is_monsoon_season": true,
+          "is_anomaly": false,
+          "z_score": 1.8,
+          "model_type_used": "TIMESERIES_LIGHTGBM",
+          "top_feature_1": "qty_consumed_trailing_30d",
+          "top_feature_1_impact": 0.38,
+          "top_feature_2": "machines_due_service_30d",
+          "top_feature_2_impact": 0.24,
+          "model_version": "v1.0.0",
+          "prediction_timestamp": "2026-06-24T03:00:00",
+          "prediction_timestamp_relative": "5h ago",
+          "actions": {
+            "can_view_detail": true,
+            "can_override": true,
+            "can_trigger_alert": true,
+            "can_export": true
+          }
+        },
+        {
+          "prediction_id": "PRED-PD-20260624-BLR-7X2200-002",
+          "part_number": "7X-2200",
+          "part_description": "Hydraulic Seal Kit",
+          "part_category": "Hydraulics",
+          "branch_id": "BR-BLR-01",
+          "branch_name": "Bangalore Branch",
+          "forecast_horizon_days": 30,
+          "period_date": "2026-07-08",
+          "predicted_qty": 19.0,
+          "predicted_qty_p10": 14.0,
+          "predicted_qty_p90": 24.0,
+          "stock_on_hand": 2,
+          "effective_available": 2,
+          "days_of_cover": 2.1,
+          "vendor_lead_time_days": 14,
+          "stockout_risk_pct": 74.0,
+          "risk_status": "CRITICAL",
+          "movement_class": "MEDIUM",
+          "consumption_trend_direction": "UP",
+          "trend_magnitude": 1.9,
+          "is_monsoon_season": true,
+          "is_anomaly": false,
+          "z_score": 2.1,
+          "model_type_used": "REGRESSION_ON_6.2",
+          "top_feature_1": "fcst_job_count_category_30d",
+          "top_feature_1_impact": 0.44,
+          "top_feature_2": "is_monsoon_season",
+          "top_feature_2_impact": 0.31,
+          "model_version": "v1.0.0",
+          "prediction_timestamp": "2026-06-24T03:00:00",
+          "prediction_timestamp_relative": "5h ago",
+          "actions": {
+            "can_view_detail": true,
+            "can_override": true,
+            "can_trigger_alert": true,
+            "can_export": true
+          }
+        }
+      ],
+      "HIGH": [
+        {
+          "prediction_id": "PRED-PD-20260624-CHN-1R0750-003",
+          "part_number": "1R-0750",
+          "part_description": "Engine Oil Filter",
+          "part_category": "Engine / Filters",
+          "branch_id": "BR-CHN-02",
+          "branch_name": "Chennai Branch",
+          "forecast_horizon_days": 30,
+          "period_date": "2026-07-08",
+          "predicted_qty": 112.0,
+          "predicted_qty_p10": 98.0,
+          "predicted_qty_p90": 126.0,
+          "stock_on_hand": 34,
+          "effective_available": 28,
+          "days_of_cover": 11.2,
+          "vendor_lead_time_days": 7,
+          "stockout_risk_pct": 12.0,
+          "risk_status": "LOW",
+          "movement_class": "FAST",
+          "consumption_trend_direction": "STABLE",
+          "trend_magnitude": 0.2,
+          "is_monsoon_season": true,
+          "is_anomaly": false,
+          "z_score": 0.3,
+          "model_type_used": "TIMESERIES_LIGHTGBM",
+          "top_feature_1": "qty_consumed_trailing_30d",
+          "top_feature_1_impact": 0.52,
+          "top_feature_2": "qty_lag_365",
+          "top_feature_2_impact": 0.18,
+          "model_version": "v1.0.0",
+          "prediction_timestamp": "2026-06-24T03:00:00",
+          "prediction_timestamp_relative": "5h ago",
+          "actions": {
+            "can_view_detail": true,
+            "can_override": true,
+            "can_trigger_alert": false,
+            "can_export": true
+          }
+        }
+      ],
+      "DEAD_STOCK": [
+        {
+          "prediction_id": "PRED-PD-20260624-BLR-9X4410-004",
+          "part_number": "9X-4410",
+          "part_description": "Specialty Idler Seal",
+          "part_category": "Undercarriage",
+          "branch_id": "BR-BLR-01",
+          "branch_name": "Bangalore Branch",
+          "forecast_horizon_days": 30,
+          "period_date": "2026-07-08",
+          "predicted_qty": 0.0,
+          "predicted_qty_p10": 0.0,
+          "predicted_qty_p90": 1.0,
+          "stock_on_hand": 6,
+          "effective_available": 6,
+          "days_of_cover": null,
+          "vendor_lead_time_days": 30,
+          "stockout_risk_pct": 2.0,
+          "risk_status": "LOW",
+          "movement_class": "DEAD",
+          "consumption_trend_direction": "STABLE",
+          "trend_magnitude": 0.0,
+          "days_since_last_movement": 186,
+          "stock_value_inr": 74400.0,
+          "dead_stock_recommendation": "WRITE_OFF_REVIEW",
+          "is_monsoon_season": true,
+          "is_anomaly": false,
+          "z_score": 0.0,
+          "model_type_used": "SIMILARITY_kNN",
+          "model_version": "v1.0.0",
+          "prediction_timestamp": "2026-06-24T03:00:00",
+          "prediction_timestamp_relative": "5h ago",
+          "actions": {
+            "can_view_detail": true,
+            "can_override": false,
+            "can_trigger_alert": false,
+            "can_export": true
+          }
+        }
+      ]
+    }
+  }
+}

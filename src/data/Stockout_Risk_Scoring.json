@@ -1,0 +1,409 @@
+{
+  "success": true,
+  "message": "Stockout Risk Scoring Model dashboard fetched successfully",
+  "result": {
+    "metadata": {
+      "model_name": "stockout_risk_scoring",
+      "model_version": "v1.0.0",
+      "forecast_run_date": "2026-06-24",
+      "forecast_period": "2026-06-24 to 2026-09-21",
+      "granularity": "daily",
+      "generated_timestamp": "2026-06-24T03:15:00",
+      "generated_timestamp_relative": "4h 45m ago",
+      "confidence_level": "80%",
+      "forecast_horizons": [
+        30,
+        60,
+        90
+      ],
+      "input_dataset_ref": "gold_parts_demand_input_v20260624",
+      "model_run_id": "RUN-SR-20260624-001",
+      "upstream_dependency": "Sub-Model 4.1 predicted_qty as primary input"
+    },
+    "summary": {
+      "total_parts_scored": 8420,
+      "critical_stockout_parts": 38,
+      "high_stockout_parts": 62,
+      "medium_stockout_parts": 43,
+      "low_risk_parts": 8277,
+      "auto_pr_triggered_today": 24,
+      "auto_pr_blocked_anomaly": 5,
+      "jobs_at_risk_if_stockouts_occur": 89,
+      "total_value_at_stockout_risk_inr": 12400000,
+      "avg_days_of_cover_fleet": 18.4,
+      "branches_with_critical_alerts": 3,
+      "sla_breach_risk_jobs": 12,
+      "data_freshness": "2026-06-24T03:00:00",
+      "data_freshness_relative": "5h ago"
+    },
+    "graph_data": {
+      "stockout_risk_heatmap": [
+        {
+          "branch_id": "BR-BLR-01",
+          "branch_name": "Bangalore",
+          "category": "Undercarriage",
+          "risk_pct": 68.0,
+          "severity": "CRITICAL",
+          "parts_at_risk": 8
+        },
+        {
+          "branch_id": "BR-BLR-01",
+          "branch_name": "Bangalore",
+          "category": "Hydraulics",
+          "risk_pct": 74.0,
+          "severity": "CRITICAL",
+          "parts_at_risk": 6
+        },
+        {
+          "branch_id": "BR-BLR-01",
+          "branch_name": "Bangalore",
+          "category": "Engine",
+          "risk_pct": 22.0,
+          "severity": "LOW",
+          "parts_at_risk": 3
+        },
+        {
+          "branch_id": "BR-CHN-02",
+          "branch_name": "Chennai",
+          "category": "Undercarriage",
+          "risk_pct": 55.0,
+          "severity": "HIGH",
+          "parts_at_risk": 7
+        },
+        {
+          "branch_id": "BR-CHN-02",
+          "branch_name": "Chennai",
+          "category": "Filters",
+          "risk_pct": 18.0,
+          "severity": "LOW",
+          "parts_at_risk": 2
+        },
+        {
+          "branch_id": "BR-HYD-03",
+          "branch_name": "Hyderabad",
+          "category": "Undercarriage",
+          "risk_pct": 81.0,
+          "severity": "CRITICAL",
+          "parts_at_risk": 11
+        },
+        {
+          "branch_id": "BR-HYD-03",
+          "branch_name": "Hyderabad",
+          "category": "Hydraulics",
+          "risk_pct": 76.0,
+          "severity": "CRITICAL",
+          "parts_at_risk": 9
+        },
+        {
+          "branch_id": "BR-DEL-04",
+          "branch_name": "Delhi",
+          "category": "Engine",
+          "risk_pct": 34.0,
+          "severity": "MEDIUM",
+          "parts_at_risk": 5
+        },
+        {
+          "branch_id": "BR-DEL-04",
+          "branch_name": "Delhi",
+          "category": "Transmission",
+          "risk_pct": 28.0,
+          "severity": "MEDIUM",
+          "parts_at_risk": 4
+        },
+        {
+          "branch_id": "BR-MUM-05",
+          "branch_name": "Mumbai",
+          "category": "Filters",
+          "risk_pct": 14.0,
+          "severity": "LOW",
+          "parts_at_risk": 2
+        }
+      ],
+      "risk_trend_over_time": [
+        {
+          "period_date": "2026-06-10",
+          "critical_count": 22,
+          "high_count": 41,
+          "medium_count": 38,
+          "low_count": 8319
+        },
+        {
+          "period_date": "2026-06-17",
+          "critical_count": 28,
+          "high_count": 48,
+          "medium_count": 40,
+          "low_count": 8304
+        },
+        {
+          "period_date": "2026-06-24",
+          "critical_count": 38,
+          "high_count": 62,
+          "medium_count": 43,
+          "low_count": 8277
+        },
+        {
+          "period_date": "2026-07-01",
+          "critical_count": 44,
+          "high_count": 71,
+          "medium_count": 48,
+          "low_count": 8257
+        },
+        {
+          "period_date": "2026-07-08",
+          "critical_count": 52,
+          "high_count": 84,
+          "medium_count": 52,
+          "low_count": 8232
+        },
+        {
+          "period_date": "2026-07-15",
+          "critical_count": 48,
+          "high_count": 78,
+          "medium_count": 49,
+          "low_count": 8245
+        }
+      ],
+      "days_of_cover_vs_lead_time_scatter": [
+        {
+          "part_number": "4T-1234",
+          "branch_id": "BR-HYD-03",
+          "days_of_cover": 5.3,
+          "lead_time_days": 21,
+          "cover_gap": -15.7,
+          "risk_pct": 68,
+          "severity": "CRITICAL"
+        },
+        {
+          "part_number": "7X-2200",
+          "branch_id": "BR-BLR-01",
+          "days_of_cover": 2.1,
+          "lead_time_days": 14,
+          "cover_gap": -11.9,
+          "risk_pct": 74,
+          "severity": "CRITICAL"
+        },
+        {
+          "part_number": "1R-0750",
+          "branch_id": "BR-CHN-02",
+          "days_of_cover": 11.2,
+          "lead_time_days": 7,
+          "cover_gap": 4.2,
+          "risk_pct": 12,
+          "severity": "LOW"
+        },
+        {
+          "part_number": "3S-0220",
+          "branch_id": "BR-DEL-04",
+          "days_of_cover": 33.8,
+          "lead_time_days": 9,
+          "cover_gap": 24.8,
+          "risk_pct": 4,
+          "severity": "LOW"
+        },
+        {
+          "part_number": "5I-7951",
+          "branch_id": "BR-HYD-03",
+          "days_of_cover": 8.4,
+          "lead_time_days": 21,
+          "cover_gap": -12.6,
+          "risk_pct": 61,
+          "severity": "HIGH"
+        },
+        {
+          "part_number": "235-5239",
+          "branch_id": "BR-MUM-05",
+          "days_of_cover": 14.2,
+          "lead_time_days": 18,
+          "cover_gap": -3.8,
+          "risk_pct": 42,
+          "severity": "MEDIUM"
+        }
+      ],
+      "auto_pr_trigger_log_today": [
+        {
+          "alert_id": "ALT-SR-001",
+          "part_number": "7X-2200",
+          "branch_id": "BR-BLR-01",
+          "stockout_risk_pct": 74.0,
+          "days_until_stockout": -11.9,
+          "severity": "CRITICAL",
+          "auto_pr_raised": true,
+          "pr_number": "PR-SAP-20260624-001",
+          "rec_order_qty": 23,
+          "rec_order_date": "2026-06-15",
+          "order_status": "URGENT"
+        },
+        {
+          "alert_id": "ALT-SR-002",
+          "part_number": "5I-7951",
+          "branch_id": "BR-HYD-03",
+          "stockout_risk_pct": 61.0,
+          "days_until_stockout": -12.6,
+          "severity": "HIGH",
+          "auto_pr_raised": true,
+          "pr_number": "PR-SAP-20260624-002",
+          "rec_order_qty": 18,
+          "rec_order_date": "2026-06-10",
+          "order_status": "URGENT"
+        },
+        {
+          "alert_id": "ALT-SR-003",
+          "part_number": "4T-1234",
+          "branch_id": "BR-HYD-03",
+          "stockout_risk_pct": 68.0,
+          "days_until_stockout": -15.7,
+          "severity": "CRITICAL",
+          "auto_pr_raised": false,
+          "pr_number": null,
+          "rec_order_qty": 51,
+          "rec_order_date": "2026-06-03",
+          "order_status": "URGENT \u2014 ANOMALY_REVIEW_PENDING",
+          "auto_pr_blocked_reason": "Anomaly z_score=2.9 \u2014 human review required"
+        },
+        {
+          "alert_id": "ALT-SR-004",
+          "part_number": "235-5239",
+          "branch_id": "BR-MUM-05",
+          "stockout_risk_pct": 42.0,
+          "days_until_stockout": -3.8,
+          "severity": "MEDIUM",
+          "auto_pr_raised": true,
+          "pr_number": "PR-SAP-20260624-003",
+          "rec_order_qty": 12,
+          "rec_order_date": "2026-06-21",
+          "order_status": "ON_TRACK"
+        }
+      ],
+      "jobs_impacted_by_category": [
+        {
+          "category": "Undercarriage",
+          "jobs_at_risk": 34,
+          "sla_jobs_at_risk": 5,
+          "avg_delay_if_stockout_days": 21
+        },
+        {
+          "category": "Hydraulics",
+          "jobs_at_risk": 28,
+          "sla_jobs_at_risk": 4,
+          "avg_delay_if_stockout_days": 14
+        },
+        {
+          "category": "Engine",
+          "jobs_at_risk": 18,
+          "sla_jobs_at_risk": 2,
+          "avg_delay_if_stockout_days": 7
+        },
+        {
+          "category": "Transmission",
+          "jobs_at_risk": 9,
+          "sla_jobs_at_risk": 1,
+          "avg_delay_if_stockout_days": 18
+        }
+      ],
+      "severity_distribution_donut": [
+        {
+          "label": "CRITICAL (>70%)",
+          "value": 38,
+          "pct": 0.45
+        },
+        {
+          "label": "HIGH (50\u201370%)",
+          "value": 62,
+          "pct": 0.74
+        },
+        {
+          "label": "MEDIUM (30\u201350%)",
+          "value": 43,
+          "pct": 0.51
+        },
+        {
+          "label": "LOW (<30%)",
+          "value": 8277,
+          "pct": 98.3
+        }
+      ]
+    },
+    "forecast_table": {
+      "CRITICAL": [
+        {
+          "alert_id": "ALT-SR-001",
+          "prediction_id": "PRED-SR-20260624-BLR-7X2200-001",
+          "part_number": "7X-2200",
+          "part_description": "Hydraulic Seal Kit",
+          "part_category": "Hydraulics",
+          "branch_id": "BR-BLR-01",
+          "branch_name": "Bangalore Branch",
+          "predicted_qty_30d": 19.0,
+          "stock_on_hand": 2,
+          "effective_available": 2,
+          "open_po_qty": 6,
+          "days_of_cover": 2.1,
+          "vendor_lead_time_days": 14,
+          "stockout_risk_pct": 74.0,
+          "days_until_stockout": -11.9,
+          "severity": "CRITICAL",
+          "rec_order_qty": 17,
+          "rec_order_date": "2026-06-15",
+          "order_status": "URGENT",
+          "open_jobs_requiring_part": 2,
+          "estimated_job_delay_if_stockout_days": 14,
+          "is_anomaly": false,
+          "auto_pr_triggered": true,
+          "sap_pr_number": "PR-SAP-20260624-001",
+          "vendor_id": "V-0309",
+          "vendor_name": "HydroSeal Co",
+          "vendor_risk_tier": "HIGH",
+          "model_version": "v1.0.0",
+          "prediction_timestamp": "2026-06-24T03:15:00",
+          "actions": {
+            "can_view_detail": true,
+            "can_override": true,
+            "can_trigger_alert": true,
+            "can_export": true,
+            "can_expedite": true
+          }
+        }
+      ],
+      "HIGH": [
+        {
+          "alert_id": "ALT-SR-002",
+          "prediction_id": "PRED-SR-20260624-HYD-5I7951-002",
+          "part_number": "5I-7951",
+          "part_description": "Hydraulic Piston Seal",
+          "part_category": "Hydraulics",
+          "branch_id": "BR-HYD-03",
+          "branch_name": "Hyderabad Branch",
+          "predicted_qty_30d": 22.0,
+          "stock_on_hand": 5,
+          "effective_available": 4,
+          "open_po_qty": 0,
+          "days_of_cover": 8.4,
+          "vendor_lead_time_days": 21,
+          "stockout_risk_pct": 61.0,
+          "days_until_stockout": -12.6,
+          "severity": "HIGH",
+          "rec_order_qty": 18,
+          "rec_order_date": "2026-06-10",
+          "order_status": "URGENT",
+          "open_jobs_requiring_part": 3,
+          "estimated_job_delay_if_stockout_days": 21,
+          "is_anomaly": false,
+          "auto_pr_triggered": true,
+          "sap_pr_number": "PR-SAP-20260624-002",
+          "vendor_id": "V-0309",
+          "vendor_name": "HydroSeal Co",
+          "vendor_risk_tier": "HIGH",
+          "model_version": "v1.0.0",
+          "prediction_timestamp": "2026-06-24T03:15:00",
+          "actions": {
+            "can_view_detail": true,
+            "can_override": true,
+            "can_trigger_alert": true,
+            "can_export": true,
+            "can_expedite": true
+          }
+        }
+      ]
+    }
+  }
+}
