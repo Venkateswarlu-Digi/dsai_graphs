@@ -1,5 +1,3 @@
-import React from 'react';
-
 export default function KPICard({ label, value, delta, type = 'normal', deltaDir }) {
   const kpiClass = type === 'alert' ? 'alert' : type === 'alert-amb' ? 'alert-amb' : '';
 

@@ -1,16 +1,14 @@
-import React from 'react';
-
 const LEGEND = [
-  ['CRITICAL >70%', 'rgba(239,90,90,.2)', '#ef5a5a'],
-  ['HIGH 50–70%', 'rgba(245,180,0,.18)', '#f5b400'],
-  ['MEDIUM 30–50%', 'rgba(167,139,250,.15)', '#a78bfa'],
-  ['LOW <30%', 'rgba(52,214,184,.12)', '#34d6b8'],
+  ['CRITICAL >70%', 'rgba(239,68,68,.13)', '#EF4444'],
+  ['HIGH 50–70%', 'rgba(245,158,11,.14)', '#B77900'],
+  ['MEDIUM 30–50%', 'rgba(139,92,246,.12)', '#8B5CF6'],
+  ['LOW <30%', 'rgba(18,190,131,.11)', '#087F59'],
 ];
 
 function cellStyle(risk) {
   const bg =
-    risk >= 70 ? 'rgba(239,90,90,.2)' : risk >= 50 ? 'rgba(245,180,0,.18)' : risk >= 30 ? 'rgba(167,139,250,.15)' : 'rgba(52,214,184,.12)';
-  const tc = risk >= 70 ? '#ef5a5a' : risk >= 50 ? '#f5b400' : risk >= 30 ? '#a78bfa' : '#34d6b8';
+    risk >= 70 ? 'rgba(239,68,68,.13)' : risk >= 50 ? 'rgba(245,158,11,.14)' : risk >= 30 ? 'rgba(139,92,246,.12)' : 'rgba(18,190,131,.11)';
+  const tc = risk >= 70 ? '#EF4444' : risk >= 50 ? '#B77900' : risk >= 30 ? '#8B5CF6' : '#087F59';
   return { bg, tc };
 }
 

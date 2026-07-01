@@ -7,6 +7,7 @@ import ChartCard from '../components/ChartCard';
 import DynamicChart from '../assets/charts/DynamicChart';
 import RiskTrend from '../assets/charts/RiskTrend';
 import RiskScatter from '../assets/charts/RiskScatter';
+import { CHART_COLORS } from '../assets/charts/chartSetup';
 
 const branchNames = {
   'BR-BLR-01': 'Bangalore',
@@ -76,8 +77,8 @@ export default function StockoutRiskPage({ onNavigate }) {
             <DynamicChart
               labels={graphs.jobs_impacted_by_category.map(item => item.category)}
               datasets={[
-                { label: 'Jobs at Risk', data: graphs.jobs_impacted_by_category.map(item => item.jobs_at_risk), backgroundColor: '#ef5a5acc' },
-                { label: 'SLA Jobs', data: graphs.jobs_impacted_by_category.map(item => item.sla_jobs_at_risk), backgroundColor: '#f5b400cc' },
+                { label: 'Jobs at Risk', data: graphs.jobs_impacted_by_category.map(item => item.jobs_at_risk), backgroundColor: `${CHART_COLORS.danger}D9` },
+                { label: 'SLA Jobs', data: graphs.jobs_impacted_by_category.map(item => item.sla_jobs_at_risk), backgroundColor: `${CHART_COLORS.warning}D9` },
               ]}
             />
           </ChartCard>

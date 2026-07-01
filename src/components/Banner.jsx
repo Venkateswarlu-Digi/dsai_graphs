@@ -1,5 +1,3 @@
-import React from 'react';
-
 export default function Banner({ banner }) {
   if (!banner) return null;
   return (

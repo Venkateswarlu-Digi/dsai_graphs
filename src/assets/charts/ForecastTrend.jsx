@@ -1,5 +1,5 @@
 import { Line } from 'react-chartjs-2';
-import { baseOpts } from './chartSetup';
+import { baseOpts, CHART_COLORS } from './chartSetup';
 
 export default function ForecastTrend({ data }) {
   const labels = data.map(point =>
@@ -13,7 +13,7 @@ export default function ForecastTrend({ data }) {
         label: 'CI Upper (p90)',
         data: data.map(point => point.confidence_high),
         borderColor: 'transparent',
-        backgroundColor: 'rgba(245,180,0,.09)',
+        backgroundColor: `${CHART_COLORS.secondary}14`,
         pointRadius: 0,
         fill: '+1',
         tension: 0.35,
@@ -22,7 +22,7 @@ export default function ForecastTrend({ data }) {
         label: 'CI Lower (p10)',
         data: data.map(point => point.confidence_low),
         borderColor: 'transparent',
-        backgroundColor: 'rgba(245,180,0,.09)',
+        backgroundColor: `${CHART_COLORS.secondary}14`,
         pointRadius: 0,
         fill: false,
         tension: 0.35,
@@ -30,21 +30,27 @@ export default function ForecastTrend({ data }) {
       {
         label: 'Actual',
         data: data.map(point => point.actual_units),
-        borderColor: '#34d6b8',
-        backgroundColor: '#34d6b8',
-        borderWidth: 2,
+        borderColor: CHART_COLORS.primary,
+        backgroundColor: `${CHART_COLORS.primary}14`,
+        borderWidth: 2.25,
         pointRadius: 3,
-        tension: 0.35,
+        pointBackgroundColor: '#FFFFFF',
+        pointBorderColor: CHART_COLORS.primary,
+        pointBorderWidth: 1.5,
+        tension: 0.38,
       },
       {
         label: 'Forecast (p50)',
         data: data.map(point => point.predicted_units),
-        borderColor: '#f5b400',
-        backgroundColor: '#f5b400',
-        borderWidth: 2,
+        borderColor: CHART_COLORS.secondary,
+        backgroundColor: `${CHART_COLORS.secondary}14`,
+        borderWidth: 2.25,
         borderDash: [4, 4],
         pointRadius: 2,
-        tension: 0.35,
+        pointBackgroundColor: '#FFFFFF',
+        pointBorderColor: CHART_COLORS.secondary,
+        pointBorderWidth: 1.5,
+        tension: 0.38,
       },
     ],
   };
@@ -55,7 +61,7 @@ export default function ForecastTrend({ data }) {
       legend: {
         labels: {
           boxWidth: 8,
-          color: '#8b93a3',
+          color: CHART_COLORS.label,
           font: { size: 9 },
           filter: item => !item.text.startsWith('CI Lower'),
         },

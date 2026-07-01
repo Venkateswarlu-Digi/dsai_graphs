@@ -1,5 +1,5 @@
-import React from 'react';
 import { Doughnut } from 'react-chartjs-2';
+import { baseOpts, CHART_COLORS } from './chartSetup';
 
 export default function RiskDonut({ labels, data }) {
   const chartData = {
@@ -8,14 +8,14 @@ export default function RiskDonut({ labels, data }) {
       {
         data,
         backgroundColor: [
-          'rgba(239,90,90,.85)',
-          'rgba(245,180,0,.85)',
-          'rgba(167,139,250,.8)',
-          'rgba(52,214,184,.3)',
+          `${CHART_COLORS.danger}E6`,
+          `${CHART_COLORS.warning}E6`,
+          `${CHART_COLORS.accent}E6`,
+          `${CHART_COLORS.primary}B8`,
         ],
-        borderColor: '#171c24',
-        borderWidth: 2,
-        hoverOffset: 4,
+        borderColor: '#FFFFFF',
+        borderWidth: 3,
+        hoverOffset: 5,
       },
     ],
   };
@@ -27,8 +27,15 @@ export default function RiskDonut({ labels, data }) {
     plugins: {
       legend: {
         position: 'right',
-        labels: { boxWidth: 9, font: { size: 9.5 }, color: '#8b93a3' },
+        labels: {
+          boxWidth: 9,
+          usePointStyle: true,
+          pointStyle: 'circle',
+          font: { size: 9.5, family: 'Inter, sans-serif' },
+          color: CHART_COLORS.label,
+        },
       },
+      tooltip: baseOpts().plugins.tooltip,
     },
   };
 

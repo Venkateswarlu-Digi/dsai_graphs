@@ -1,11 +1,11 @@
 import { Scatter } from 'react-chartjs-2';
-import { baseOpts } from './chartSetup';
+import { baseOpts, CHART_COLORS } from './chartSetup';
 
 const colors = {
-  CRITICAL: '#ef5a5a',
-  HIGH: '#f5b400',
-  MEDIUM: '#a78bfa',
-  LOW: '#34d6b8',
+  CRITICAL: CHART_COLORS.danger,
+  HIGH: CHART_COLORS.warning,
+  MEDIUM: CHART_COLORS.accent,
+  LOW: CHART_COLORS.primary,
 };
 
 export default function RiskScatter({ data }) {
@@ -21,6 +21,8 @@ export default function RiskScatter({ data }) {
           risk: point.risk_pct,
         })),
       backgroundColor: colors[severity],
+      borderColor: '#FFFFFF',
+      borderWidth: 1.5,
       pointRadius: data.filter(point => point.severity === severity).map(point => 4 + point.risk_pct / 15),
       pointHoverRadius: 8,
     })),
@@ -39,8 +41,8 @@ export default function RiskScatter({ data }) {
       },
     },
   });
-  options.scales.x.title = { display: true, text: 'Lead Time (days)', color: '#5b6373', font: { size: 9 } };
-  options.scales.y.title = { display: true, text: 'Days Cover', color: '#5b6373', font: { size: 9 } };
+  options.scales.x.title = { display: true, text: 'Lead Time (days)', color: CHART_COLORS.label, font: { size: 9 } };
+  options.scales.y.title = { display: true, text: 'Days Cover', color: CHART_COLORS.label, font: { size: 9 } };
 
   return <Scatter data={chartData} options={options} />;
 }

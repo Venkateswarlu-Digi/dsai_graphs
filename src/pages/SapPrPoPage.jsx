@@ -6,6 +6,7 @@ import KPICard from '../components/KPICard';
 import ChartCard from '../components/ChartCard';
 import DynamicChart from '../assets/charts/DynamicChart';
 import SapActivityChart from '../assets/charts/SapActivityChart';
+import { CHART_COLORS } from '../assets/charts/chartSetup';
 
 const branchNames = {
   'BR-HSR-02': 'Hyderabad',
@@ -110,8 +111,8 @@ export default function SapPrPoPage({ onNavigate }) {
               <DynamicChart
                 labels={graphs.eta_prediction_accuracy.map(item => item.vendor_name)}
                 datasets={[
-                  { label: 'ETA Accuracy %', data: graphs.eta_prediction_accuracy.map(item => item.accuracy_pct), backgroundColor: '#34d6b8cc' },
-                  { label: 'On-Time %', data: graphs.eta_prediction_accuracy.map(item => item.on_time_pct), backgroundColor: '#38bdf888' },
+                  { label: 'ETA Accuracy %', data: graphs.eta_prediction_accuracy.map(item => item.accuracy_pct), backgroundColor: `${CHART_COLORS.primary}D9` },
+                  { label: 'On-Time %', data: graphs.eta_prediction_accuracy.map(item => item.on_time_pct), backgroundColor: `${CHART_COLORS.secondary}B8` },
                 ]}
               />
             </ChartCard>
@@ -119,8 +120,8 @@ export default function SapPrPoPage({ onNavigate }) {
               <DynamicChart
                 labels={graphs.shortage_alerts_by_severity.map(item => item.severity)}
                 datasets={[
-                  { label: 'Total Alerts', data: graphs.shortage_alerts_by_severity.map(item => item.count), backgroundColor: ['#ef5a5acc', '#f5b400cc', '#a78bfacc', '#34d6b8cc'] },
-                  { label: 'SLA Jobs', data: graphs.shortage_alerts_by_severity.map(item => item.sla_jobs_impacted), backgroundColor: '#ef5a5a66' },
+                  { label: 'Total Alerts', data: graphs.shortage_alerts_by_severity.map(item => item.count), backgroundColor: [`${CHART_COLORS.danger}D9`, `${CHART_COLORS.warning}D9`, `${CHART_COLORS.accent}CC`, `${CHART_COLORS.primary}D9`] },
+                  { label: 'SLA Jobs', data: graphs.shortage_alerts_by_severity.map(item => item.sla_jobs_impacted), backgroundColor: `${CHART_COLORS.danger}70` },
                 ]}
               />
             </ChartCard>

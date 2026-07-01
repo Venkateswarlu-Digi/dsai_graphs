@@ -6,10 +6,11 @@ import KPICard from '../components/KPICard';
 import ChartCard from '../components/ChartCard';
 import DynamicChart from '../assets/charts/DynamicChart';
 import ForecastTrend from '../assets/charts/ForecastTrend';
+import { CHART_COLORS, CHART_PALETTE } from '../assets/charts/chartSetup';
 
 const compact = new Intl.NumberFormat('en-IN', { notation: 'compact', maximumFractionDigits: 1 });
 const number = new Intl.NumberFormat('en-IN');
-const COLORS = ['#f5b400', '#34d6b8', '#38bdf8', '#a78bfa', '#ef67b0', '#20c9a5', '#64748b'];
+const COLORS = [...CHART_PALETTE];
 
 function allPredictions(table) {
   return Object.values(table).flat();
@@ -77,8 +78,8 @@ export default function DemandForecastPage({ onNavigate }) {
             <DynamicChart
               labels={topParts.map(item => item.part_number)}
               datasets={[
-                { label: 'Stock on Hand', data: topParts.map(item => item.stock_on_hand), backgroundColor: '#38bdf888' },
-                { label: '30d Forecast', data: topParts.map(item => item.predicted_qty), backgroundColor: '#f5b400cc' },
+                { label: 'Stock on Hand', data: topParts.map(item => item.stock_on_hand), backgroundColor: `${CHART_COLORS.secondary}B8` },
+                { label: '30d Forecast', data: topParts.map(item => item.predicted_qty), backgroundColor: `${CHART_COLORS.primary}D9` },
               ]}
             />
           </ChartCard>

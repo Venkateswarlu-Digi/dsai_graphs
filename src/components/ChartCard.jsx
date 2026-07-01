@@ -1,5 +1,3 @@
-import React from 'react';
-
 export default function ChartCard({ title, tag, height = 'normal', children }) {
   const heightClass = height === 'tall' ? 'tall' : height === 'sm' ? 'sm' : '';
   return (

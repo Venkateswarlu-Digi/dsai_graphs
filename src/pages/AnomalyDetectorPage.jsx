@@ -5,6 +5,7 @@ import Header from '../components/Header';
 import KPICard from '../components/KPICard';
 import ChartCard from '../components/ChartCard';
 import DynamicChart from '../assets/charts/DynamicChart';
+import { CHART_COLORS } from '../assets/charts/chartSetup';
 
 const branches = {
   'BR-BLR-01': 'Bangalore',
@@ -70,8 +71,8 @@ export default function AnomalyDetectorPage({ onNavigate }) {
                 stacked
                 labels={graphs.anomaly_timeline.map(item => dateLabel(item.detection_date))}
                 datasets={[
-                  { label: 'Critical', data: graphs.anomaly_timeline.map(item => item.critical_count), backgroundColor: '#ef5a5acc' },
-                  { label: 'Warning', data: graphs.anomaly_timeline.map(item => item.warning_count), backgroundColor: '#a78bfacc' },
+                  { label: 'Critical', data: graphs.anomaly_timeline.map(item => item.critical_count), backgroundColor: `${CHART_COLORS.danger}D9` },
+                  { label: 'Warning', data: graphs.anomaly_timeline.map(item => item.warning_count), backgroundColor: `${CHART_COLORS.warning}D9` },
                 ]}
               />
             </ChartCard>
@@ -81,7 +82,7 @@ export default function AnomalyDetectorPage({ onNavigate }) {
                 datasets={[{
                   label: 'Average Z-Score',
                   data: graphs.anomaly_by_category_bar.map(item => item.avg_z_score),
-                  backgroundColor: graphs.anomaly_by_category_bar.map(item => item.avg_z_score > 4 ? '#ef5a5acc' : '#a78bfacc'),
+                  backgroundColor: graphs.anomaly_by_category_bar.map(item => item.avg_z_score > 4 ? `${CHART_COLORS.danger}D9` : `${CHART_COLORS.accent}CC`),
                 }]}
               />
             </ChartCard>
@@ -91,7 +92,7 @@ export default function AnomalyDetectorPage({ onNavigate }) {
                 datasets={[{
                   label: 'Count',
                   data: graphs.z_score_distribution_histogram.map(item => item.count),
-                  backgroundColor: graphs.z_score_distribution_histogram.map(item => item.severity === 'CRITICAL' ? '#ef5a5acc' : '#a78bfacc'),
+                  backgroundColor: graphs.z_score_distribution_histogram.map(item => item.severity === 'CRITICAL' ? `${CHART_COLORS.danger}D9` : `${CHART_COLORS.accent}CC`),
                 }]}
               />
             </ChartCard>

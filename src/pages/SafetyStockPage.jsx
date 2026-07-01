@@ -5,6 +5,7 @@ import Header from '../components/Header';
 import KPICard from '../components/KPICard';
 import ChartCard from '../components/ChartCard';
 import DynamicChart from '../assets/charts/DynamicChart';
+import { CHART_COLORS } from '../assets/charts/chartSetup';
 
 const branchNames = {
   'BR-BLR-01': 'Bangalore',
@@ -54,8 +55,8 @@ export default function SafetyStockPage({ onNavigate }) {
               <DynamicChart
                 labels={graphs.safety_stock_current_vs_recommended_bar.map(item => item.category)}
                 datasets={[
-                  { label: 'Current', data: graphs.safety_stock_current_vs_recommended_bar.map(item => item.current_safety_stock_avg), backgroundColor: '#38bdf888' },
-                  { label: 'Recommended', data: graphs.safety_stock_current_vs_recommended_bar.map(item => item.recommended_safety_stock_avg), backgroundColor: graphs.safety_stock_current_vs_recommended_bar.map(item => item.change_pct < 0 ? '#ef5a5acc' : '#34d6b8cc') },
+                  { label: 'Current', data: graphs.safety_stock_current_vs_recommended_bar.map(item => item.current_safety_stock_avg), backgroundColor: `${CHART_COLORS.neutral}B8` },
+                  { label: 'Recommended', data: graphs.safety_stock_current_vs_recommended_bar.map(item => item.recommended_safety_stock_avg), backgroundColor: graphs.safety_stock_current_vs_recommended_bar.map(item => item.change_pct < 0 ? `${CHART_COLORS.danger}D9` : `${CHART_COLORS.primary}D9`) },
                 ]}
               />
             </ChartCard>
