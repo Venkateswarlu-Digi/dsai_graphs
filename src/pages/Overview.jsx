@@ -44,37 +44,62 @@ export default function Overview({ active = 'overview', onNavigate }) {
           </div>
 
           <div className="overview-chart-grid">
-            <ChartCard title="Demand Trend" tag={charts.demandTrend.tag} height="sm">
+            <ChartCard
+              title="Demand Trend"
+              tooltip="Displays the predicted demand trend for selected products over time. Peaks indicate higher forecasted demand."
+              tag={charts.demandTrend.tag}
+              height="sm"
+            >
               <DemandTrend data={charts.demandTrend} />
             </ChartCard>
-            <ChartCard title="Stockout Risk Split" tag={charts.stockoutRiskDonut.tag} height="sm">
-              <RiskDonut labels={charts.stockoutRiskDonut.labels} data={charts.stockoutRiskDonut.data} />
+
+            <ChartCard
+              title="Stockout Risk Split"
+              tooltip="Shows the percentage of products grouped by Low, Medium and High stockout risk."
+              tag={charts.stockoutRiskDonut.tag}
+              height="sm"
+            >
+              <RiskDonut
+                labels={charts.stockoutRiskDonut.labels}
+                data={charts.stockoutRiskDonut.data}
+              />
             </ChartCard>
-            <ChartCard title="Risk Trend — 6 Weeks" tag={charts.riskTrend.tag} height="sm">
+
+            <ChartCard
+              title="Risk Trend — 6 Weeks"
+              tooltip="Illustrates how stockout risk has changed during the last six weeks."
+              tag={charts.riskTrend.tag}
+              height="sm"
+            >
               <RiskTrend data={charts.riskTrend.data} />
+            </ChartCard>
+
+            <ChartCard
+              title="Jobs at Risk by Category"
+              tooltip="Shows the number of work orders likely to be delayed due to inventory shortages across categories."
+              tag={charts.jobsAtRisk.tag}
+            >
+              <JobsRisk data={charts.jobsAtRisk.data} />
             </ChartCard>
           </div>
 
           <div className="grid2">
-            <div className="panel">
-              <h3>
-                Stockout Risk Heatmap — Branch × Category
-                <span className="tag">risk %</span>
-              </h3>
+            <ChartCard
+              title="Stockout Risk Heatmap — Branch × Category"
+              tooltip="Displays the stockout risk percentage across branches and product categories. Darker cells indicate higher stockout risk, helping identify inventory shortages by location and category."
+              tag="risk %"
+            >
               <Heatmaps data={heatmap.data} />
-            </div>
-            <div className="panel">
-              <h3>
-                Priority Actions Today
-                <span className="tag">top decisions</span>
-              </h3>
+            </ChartCard>
+            <ChartCard
+              title="Priority Actions Today"
+              tooltip="Highlights the highest-priority inventory actions that require immediate attention, such as critical stock shortages, urgent transfers, or replenishment recommendations."
+              tag="top decisions"
+            >
               <PriorityActions items={priorityActions} />
-            </div>
+            </ChartCard>
           </div>
 
-          <ChartCard title="Jobs at Risk by Category" tag={charts.jobsAtRisk.tag}>
-            <JobsRisk data={charts.jobsAtRisk.data} />
-          </ChartCard>
 
           <ModelInfo meta={meta} />
         </div>

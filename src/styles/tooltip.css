@@ -1,0 +1,53 @@
+.info-button {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+
+  margin-left: 6px;
+
+  font-size: 14px;
+  color: #6b7280;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+}
+
+.info-button:hover {
+  color: #2563eb;
+}
+
+.tooltip-box {
+  position: absolute;
+
+  width: 260px;
+
+  padding: 8px 10px;
+
+  background: #1f2937;
+  color: #fff;
+
+  border-radius: 8px;
+
+  font-size: 12px;
+  line-height: 1.4;
+
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+
+  z-index: 99999;
+
+  animation: tooltipFade 0.15s ease;
+}
+
+@keyframes tooltipFade {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

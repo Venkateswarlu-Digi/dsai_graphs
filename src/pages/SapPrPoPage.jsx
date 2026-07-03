@@ -9,11 +9,8 @@ import SapActivityChart from '../assets/charts/SapActivityChart';
 import { CHART_COLORS } from '../assets/charts/chartSetup';
 
 const branchNames = {
-  'BR-HSR-02': 'Hyderabad',
-  'BR-BLR-01': 'Bangalore',
-  'BR-HYD-03': 'Hyderabad',
-  'BR-DEL-03': 'Delhi',
-  'BR-CHN-02': 'Chennai',
+  'BR-NGR-03': 'Nagpur',
+  'BR-CHN-02': 'Chennai'
 };
 const categories = ['Engine', 'Undercarriage', 'Hydraulics', 'Filters', 'Transmission'];
 const dateLabel = value => value ? new Date(`${value}T00:00:00`).toLocaleDateString('en-CA') : '—';
@@ -51,16 +48,30 @@ export default function SapPrPoPage({ onNavigate }) {
           <div className="kpis sap-kpis">{kpis.map(kpi => <KPICard key={kpi.label} {...kpi} />)}</div>
 
           <div className="sap-top-charts">
-            <ChartCard title="PR/PO Activity — 7 Days" tag="daily volume" height="sm">
+            <ChartCard
+              title="PR/PO Activity — 7 Days"
+              tag="daily volume"
+              height="sm"
+              tooltip="Shows the daily volume of Purchase Requisitions (PRs) and Purchase Orders (POs) processed over the past seven days. This helps monitor procurement activity, automation throughput, and order processing trends."
+            >
               <SapActivityChart data={graphs.pr_po_activity_timeline} />
             </ChartCard>
-            <ChartCard title="Consumption Trend by Category" tag="weekly units" height="sm">
+            <ChartCard
+              title="Consumption Trend by Category"
+              tag="weekly units"
+              height="sm"
+              tooltip="Displays weekly parts consumption trends across major inventory categories. Tracking these trends helps identify demand patterns, seasonal changes, and categories requiring replenishment planning."
+            >
               <DynamicChart
                 type="line"
-                labels={graphs.consumption_analytics_category_trend.map(item => dateLabel(item.period_date))}
+                labels={graphs.consumption_analytics_category_trend.map(item =>
+                  dateLabel(item.period_date)
+                )}
                 datasets={categories.map(category => ({
                   label: category,
-                  data: graphs.consumption_analytics_category_trend.map(item => item[category]),
+                  data: graphs.consumption_analytics_category_trend.map(
+                    item => item[category]
+                  ),
                 }))}
               />
             </ChartCard>
@@ -107,21 +118,55 @@ export default function SapPrPoPage({ onNavigate }) {
           </div>
 
           <div className="sap-bottom-charts">
-            <ChartCard title="Vendor ETA Prediction Accuracy" tag="predicted vs actual" height="sm">
+            <ChartCard
+              title="Vendor ETA Prediction Accuracy"
+              tag="predicted vs actual"
+              height="sm"
+              tooltip="Compares predicted delivery accuracy with actual on-time delivery performance for each vendor. This helps evaluate supplier reliability and improve procurement planning."
+            >
               <DynamicChart
                 labels={graphs.eta_prediction_accuracy.map(item => item.vendor_name)}
                 datasets={[
-                  { label: 'ETA Accuracy %', data: graphs.eta_prediction_accuracy.map(item => item.accuracy_pct), backgroundColor: `${CHART_COLORS.primary}D9` },
-                  { label: 'On-Time %', data: graphs.eta_prediction_accuracy.map(item => item.on_time_pct), backgroundColor: `${CHART_COLORS.secondary}B8` },
+                  {
+                    label: "ETA Accuracy %",
+                    data: graphs.eta_prediction_accuracy.map(item => item.accuracy_pct),
+                    backgroundColor: `${CHART_COLORS.primary}D9`,
+                  },
+                  {
+                    label: "On-Time %",
+                    data: graphs.eta_prediction_accuracy.map(item => item.on_time_pct),
+                    backgroundColor: `${CHART_COLORS.secondary}B8`,
+                  },
                 ]}
               />
             </ChartCard>
-            <ChartCard title="Shortage Alerts by Severity" tag="notified" height="sm">
+
+            <ChartCard
+              title="Shortage Alerts by Severity"
+              tag="notified"
+              height="sm"
+              tooltip="Shows the number of inventory shortage alerts grouped by severity level, along with the number of affected SLA-critical jobs. This enables teams to prioritize high-impact shortages and reduce service disruptions."
+            >
               <DynamicChart
                 labels={graphs.shortage_alerts_by_severity.map(item => item.severity)}
                 datasets={[
-                  { label: 'Total Alerts', data: graphs.shortage_alerts_by_severity.map(item => item.count), backgroundColor: [`${CHART_COLORS.danger}D9`, `${CHART_COLORS.warning}D9`, `${CHART_COLORS.accent}CC`, `${CHART_COLORS.primary}D9`] },
-                  { label: 'SLA Jobs', data: graphs.shortage_alerts_by_severity.map(item => item.sla_jobs_impacted), backgroundColor: `${CHART_COLORS.danger}70` },
+                  {
+                    label: "Total Alerts",
+                    data: graphs.shortage_alerts_by_severity.map(item => item.count),
+                    backgroundColor: [
+                      `${CHART_COLORS.danger}D9`,
+                      `${CHART_COLORS.warning}D9`,
+                      `${CHART_COLORS.accent}CC`,
+                      `${CHART_COLORS.primary}D9`,
+                    ],
+                  },
+                  {
+                    label: "SLA Jobs",
+                    data: graphs.shortage_alerts_by_severity.map(
+                      item => item.sla_jobs_impacted
+                    ),
+                    backgroundColor: `${CHART_COLORS.danger}70`,
+                  },
                 ]}
               />
             </ChartCard>

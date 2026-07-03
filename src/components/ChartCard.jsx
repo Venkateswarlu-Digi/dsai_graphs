@@ -1,11 +1,28 @@
-export default function ChartCard({ title, tag, height = 'normal', children }) {
-  const heightClass = height === 'tall' ? 'tall' : height === 'sm' ? 'sm' : '';
+import InfoTooltip from "./InfoTooltip";
+
+export default function ChartCard({
+  title,
+  tooltip,
+  tag,
+  children,
+}) {
   return (
     <div className="panel">
-      <h3>
-        {title} {tag && <span className="tag">{tag}</span>}
-      </h3>
-      <div className={`chart-wrap ${heightClass}`}>{children}</div>
+      <div className="panel-header">
+        <div className="panel-title">
+          <span>{title}</span>
+
+          {tooltip && (
+            <InfoTooltip text={tooltip} />
+          )}
+        </div>
+
+        <span className="tag">{tag}</span>
+      </div>
+
+      <div className="chart-wrap">
+        {children}
+      </div>
     </div>
   );
 }

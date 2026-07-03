@@ -8,10 +8,8 @@ import DynamicChart from '../assets/charts/DynamicChart';
 import { CHART_COLORS } from '../assets/charts/chartSetup';
 
 const branchNames = {
-  'BR-BLR-01': 'Bangalore',
-  'BR-HYD-03': 'Hyderabad',
-  'BR-MUM-05': 'Mumbai',
-  'BR-DEL-04': 'Delhi',
+  'BR-CHE-01': 'Chennai',
+  'BR-NGR-03': 'Nagpur'
 };
 
 const inr = value => `₹${(value / 100000).toFixed(value >= 100000 ? 1 : 2)}L`;
@@ -51,22 +49,54 @@ export default function SafetyStockPage({ onNavigate }) {
           <div className="kpis safety-kpis">{kpis.map(kpi => <KPICard key={kpi.label} {...kpi} />)}</div>
 
           <div className="safety-chart-grid">
-            <ChartCard title="Safety Stock: Current vs Recommended" tag="avg by category" height="sm">
+            <ChartCard
+              title="Safety Stock: Current vs Recommended"
+              tag="avg by category"
+              height="sm"
+              tooltip="Compares the current average safety stock with the recommended safety stock across inventory categories. Differences highlight where inventory levels should be increased or reduced to balance service levels and inventory costs."
+            >
               <DynamicChart
                 labels={graphs.safety_stock_current_vs_recommended_bar.map(item => item.category)}
                 datasets={[
-                  { label: 'Current', data: graphs.safety_stock_current_vs_recommended_bar.map(item => item.current_safety_stock_avg), backgroundColor: `${CHART_COLORS.neutral}B8` },
-                  { label: 'Recommended', data: graphs.safety_stock_current_vs_recommended_bar.map(item => item.recommended_safety_stock_avg), backgroundColor: graphs.safety_stock_current_vs_recommended_bar.map(item => item.change_pct < 0 ? `${CHART_COLORS.danger}D9` : `${CHART_COLORS.primary}D9`) },
+                  {
+                    label: "Current",
+                    data: graphs.safety_stock_current_vs_recommended_bar.map(
+                      item => item.current_safety_stock_avg
+                    ),
+                    backgroundColor: `${CHART_COLORS.neutral}B8`,
+                  },
+                  {
+                    label: "Recommended",
+                    data: graphs.safety_stock_current_vs_recommended_bar.map(
+                      item => item.recommended_safety_stock_avg
+                    ),
+                    backgroundColor: graphs.safety_stock_current_vs_recommended_bar.map(
+                      item =>
+                        item.change_pct < 0
+                          ? `${CHART_COLORS.danger}D9`
+                          : `${CHART_COLORS.primary}D9`
+                    ),
+                  },
                 ]}
               />
             </ChartCard>
-            <ChartCard title="Vendor Lead Time Trend" tag="4 vendors · 4 months" height="sm">
+
+            <ChartCard
+              title="Vendor Lead Time Trend"
+              tag="4 vendors · 4 months"
+              height="sm"
+              tooltip="Tracks supplier lead time performance over recent months for each vendor. Monitoring these trends helps identify delays, assess supplier reliability, and support vendor selection decisions."
+            >
               <DynamicChart
                 type="line"
-                labels={graphs.lead_time_trend_by_vendor.map(item => dateLabel(item.period_date))}
+                labels={graphs.lead_time_trend_by_vendor.map(item =>
+                  dateLabel(item.period_date)
+                )}
                 datasets={graphs.vendor_lead_time_performance_bar.map(vendor => ({
                   label: vendor.vendor_name,
-                  data: graphs.lead_time_trend_by_vendor.map(item => item[`${vendor.vendor_id}_actual_days`]),
+                  data: graphs.lead_time_trend_by_vendor.map(
+                    item => item[`${vendor.vendor_id}_actual_days`]
+                  ),
                 }))}
               />
             </ChartCard>

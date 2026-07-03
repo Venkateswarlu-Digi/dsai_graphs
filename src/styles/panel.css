@@ -1,0 +1,39 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+
+  overflow: visible;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 14px;
+}
+
+.panel-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.chart-wrap {
+  position: relative;
+
+  width: 100%;
+  flex: 1;
+  min-height: 250px; /* Use your original chart height */
+}
+
+.tag {
+  flex-shrink: 0;
+}

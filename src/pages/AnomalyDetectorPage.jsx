@@ -8,9 +8,7 @@ import DynamicChart from '../assets/charts/DynamicChart';
 import { CHART_COLORS } from '../assets/charts/chartSetup';
 
 const branches = {
-  'BR-BLR-01': 'Bangalore',
-  'BR-DEL-04': 'Delhi',
-  'BR-HYD-03': 'Hyderabad',
+  'BR-NGR-01': 'Nagpur',
   'BR-CHN-02': 'Chennai',
 };
 
@@ -66,34 +64,71 @@ export default function AnomalyDetectorPage({ onNavigate }) {
           <div className="kpis anomaly-kpis">{kpis.map(kpi => <KPICard key={kpi.label} {...kpi} />)}</div>
 
           <div className="anomaly-chart-grid">
-            <ChartCard title="Anomaly Timeline — 7 Days" tag="daily · stacked" height="sm">
+            <ChartCard
+              title="Anomaly Timeline — 7 Days"
+              tag="daily · stacked"
+              height="sm"
+              tooltip="Displays the daily count of detected anomalies over the past seven days, categorized by Critical and Warning severity. This helps identify spikes in unusual inventory consumption and monitor operational stability."
+            >
               <DynamicChart
                 stacked
                 labels={graphs.anomaly_timeline.map(item => dateLabel(item.detection_date))}
                 datasets={[
-                  { label: 'Critical', data: graphs.anomaly_timeline.map(item => item.critical_count), backgroundColor: `${CHART_COLORS.danger}D9` },
-                  { label: 'Warning', data: graphs.anomaly_timeline.map(item => item.warning_count), backgroundColor: `${CHART_COLORS.warning}D9` },
+                  {
+                    label: "Critical",
+                    data: graphs.anomaly_timeline.map(item => item.critical_count),
+                    backgroundColor: `${CHART_COLORS.danger}D9`,
+                  },
+                  {
+                    label: "Warning",
+                    data: graphs.anomaly_timeline.map(item => item.warning_count),
+                    backgroundColor: `${CHART_COLORS.warning}D9`,
+                  },
                 ]}
               />
             </ChartCard>
-            <ChartCard title="Anomalies by Category" tag="avg z-score" height="sm">
+
+            <ChartCard
+              title="Anomalies by Category"
+              tag="avg z-score"
+              height="sm"
+              tooltip="Shows the average Z-score of detected anomalies across inventory categories. Higher Z-scores indicate greater deviation from expected consumption patterns and help identify categories requiring investigation."
+            >
               <DynamicChart
                 labels={graphs.anomaly_by_category_bar.map(item => item.category)}
-                datasets={[{
-                  label: 'Average Z-Score',
-                  data: graphs.anomaly_by_category_bar.map(item => item.avg_z_score),
-                  backgroundColor: graphs.anomaly_by_category_bar.map(item => item.avg_z_score > 4 ? `${CHART_COLORS.danger}D9` : `${CHART_COLORS.accent}CC`),
-                }]}
+                datasets={[
+                  {
+                    label: "Average Z-Score",
+                    data: graphs.anomaly_by_category_bar.map(item => item.avg_z_score),
+                    backgroundColor: graphs.anomaly_by_category_bar.map(item =>
+                      item.avg_z_score > 4
+                        ? `${CHART_COLORS.danger}D9`
+                        : `${CHART_COLORS.accent}CC`
+                    ),
+                  },
+                ]}
               />
             </ChartCard>
-            <ChartCard title="Z-Score Distribution" tag="histogram" height="sm">
+
+            <ChartCard
+              title="Z-Score Distribution"
+              tag="histogram"
+              height="sm"
+              tooltip="Illustrates the distribution of anomaly Z-scores across predefined ranges. The histogram highlights the frequency of normal, warning, and critical anomalies, providing an overview of anomaly severity."
+            >
               <DynamicChart
                 labels={graphs.z_score_distribution_histogram.map(item => item.z_score_band)}
-                datasets={[{
-                  label: 'Count',
-                  data: graphs.z_score_distribution_histogram.map(item => item.count),
-                  backgroundColor: graphs.z_score_distribution_histogram.map(item => item.severity === 'CRITICAL' ? `${CHART_COLORS.danger}D9` : `${CHART_COLORS.accent}CC`),
-                }]}
+                datasets={[
+                  {
+                    label: "Count",
+                    data: graphs.z_score_distribution_histogram.map(item => item.count),
+                    backgroundColor: graphs.z_score_distribution_histogram.map(item =>
+                      item.severity === "CRITICAL"
+                        ? `${CHART_COLORS.danger}D9`
+                        : `${CHART_COLORS.accent}CC`
+                    ),
+                  },
+                ]}
               />
             </ChartCard>
           </div>
