@@ -318,7 +318,7 @@ select.filter{background:var(--panel-2);border:1px solid var(--line);color:var(-
 .anomaly-kpis .label{font-size:7.5px;margin-bottom:4px;}
 .anomaly-kpis .value{font-size:16px;}
 .anomaly-kpis .delta{font-size:7px;margin-top:3px;}
-.anomaly-chart-grid{display:grid;grid-template-columns:1.05fr 1.05fr 1fr;gap:7px;margin-bottom:7px;}
+.anomaly-chart-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-bottom:7px;}
 .anomaly-page .panel{padding:9px 10px;border-radius:4px;}
 .anomaly-page .panel h3{font-size:9px;margin-bottom:7px;}
 .anomaly-page .chart-wrap.sm{height:120px;}
