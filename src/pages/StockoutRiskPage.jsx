@@ -68,7 +68,7 @@ export default function StockoutRiskPage({ onNavigate }) {
               title="Risk Trend — 6 Weeks"
               tag="stacked severity"
               height="sm"
-              tooltip="Displays the weekly trend of stockout risks over the past six weeks, categorized by Critical, High, and Medium severity. This helps monitor whether inventory risk is increasing or decreasing over time."
+              tooltip="Stacked bar chart of weekly Critical, High, and Medium stockout risk part counts over 6 weeks, showing whether the risk profile is trending up or down."
             >
               <RiskTrend data={riskTrend} />
             </ChartCard>
@@ -76,7 +76,7 @@ export default function StockoutRiskPage({ onNavigate }) {
               title="Days Cover vs Lead Time"
               tag="scatter · bubble size = risk"
               height="sm"
-              tooltip="Compares available inventory coverage with supplier lead time for each part. Larger bubbles represent higher stockout risk, helping identify parts that may run out before replenishment arrives."
+              tooltip="Bubble scatter plot mapping each part's remaining days of stock cover against its vendor lead time, with bubble size representing risk score — parts in the danger zone (low cover, long lead time) stand out immediately."
             >
               <RiskScatter data={graphs.days_of_cover_vs_lead_time_scatter} />
             </ChartCard>
@@ -84,7 +84,7 @@ export default function StockoutRiskPage({ onNavigate }) {
               title="Jobs at Risk by Category"
               tag="SLA impact"
               height="sm"
-              tooltip="Shows the number of jobs at risk due to inventory shortages across different part categories. The chart also highlights jobs with potential SLA breaches, enabling prioritization of critical inventory."
+              tooltip="Bar chart showing jobs at stockout risk and jobs specifically at SLA breach risk, grouped by part category."
             >
               <DynamicChart
                 labels={graphs.jobs_impacted_by_category.map(item => item.category)}

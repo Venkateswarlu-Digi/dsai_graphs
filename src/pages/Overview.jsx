@@ -46,7 +46,7 @@ export default function Overview({ active = 'overview', onNavigate }) {
           <div className="overview-chart-grid">
             <ChartCard
               title="Demand Trend"
-              tooltip="Displays the predicted demand trend for selected products over time. Peaks indicate higher forecasted demand."
+              tooltip="Line chart comparing actual parts demand against the forecasted demand over the last 90 days, so you can spot where predictions are drifting from reality."
               tag={charts.demandTrend.tag}
               height="sm"
             >
@@ -55,7 +55,7 @@ export default function Overview({ active = 'overview', onNavigate }) {
 
             <ChartCard
               title="Stockout Risk Split"
-              tooltip="Shows the percentage of products grouped by Low, Medium and High stockout risk."
+              tooltip="Donut chart showing the current portfolio of parts broken into Critical, High, Medium, and Low stockout risk buckets, so you can gauge overall risk exposure at a glance."
               tag={charts.stockoutRiskDonut.tag}
               height="sm"
             >
@@ -67,7 +67,7 @@ export default function Overview({ active = 'overview', onNavigate }) {
 
             <ChartCard
               title="Risk Trend — 6 Weeks"
-              tooltip="Illustrates how stockout risk has changed during the last six weeks."
+              tooltip="Stacked bar chart tracking how many parts fell into Critical, High, and Medium risk each week over the past 6 weeks, showing whether risk is improving or worsening."
               tag={charts.riskTrend.tag}
               height="sm"
             >
@@ -76,7 +76,7 @@ export default function Overview({ active = 'overview', onNavigate }) {
 
             <ChartCard
               title="Jobs at Risk by Category"
-              tooltip="Shows the number of work orders likely to be delayed due to inventory shortages across categories."
+              tooltip="Bar chart showing the number of jobs at stockout risk and the subset of those at SLA breach risk, broken down by part category."
               tag={charts.jobsAtRisk.tag}
             >
               <JobsRisk data={charts.jobsAtRisk.data} />
@@ -86,14 +86,14 @@ export default function Overview({ active = 'overview', onNavigate }) {
           <div className="grid2">
             <ChartCard
               title="Stockout Risk Heatmap — Branch × Category"
-              tooltip="Displays the stockout risk percentage across branches and product categories. Darker cells indicate higher stockout risk, helping identify inventory shortages by location and category."
+              tooltip="Color-coded grid showing stockout risk percentage for every branch and part category combination, making it easy to spot hotspots at a glance."
               tag="risk %"
             >
               <Heatmaps data={heatmap.data} />
             </ChartCard>
             <ChartCard
               title="Priority Actions Today"
-              tooltip="Highlights the highest-priority inventory actions that require immediate attention, such as critical stock shortages, urgent transfers, or replenishment recommendations."
+              tooltip="Line chart tracking daily counts of purchase requisitions raised, purchase orders raised, and job-triggered events over the last 7 days, showing procurement activity momentum."
               tag="top decisions"
             >
               <PriorityActions items={priorityActions} />

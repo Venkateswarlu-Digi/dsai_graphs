@@ -53,7 +53,7 @@ export default function SafetyStockPage({ onNavigate }) {
               title="Safety Stock: Current vs Recommended"
               tag="avg by category"
               height="sm"
-              tooltip="Compares the current average safety stock with the recommended safety stock across inventory categories. Differences highlight where inventory levels should be increased or reduced to balance service levels and inventory costs."
+              tooltip="Bar chart comparing existing safety stock quantities to the model's statistically recommended quantities for each category, showing where buffers should be adjusted and by how much."
             >
               <DynamicChart
                 labels={graphs.safety_stock_current_vs_recommended_bar.map(item => item.category)}
@@ -85,7 +85,7 @@ export default function SafetyStockPage({ onNavigate }) {
               title="Vendor Lead Time Trend"
               tag="4 vendors · 4 months"
               height="sm"
-              tooltip="Tracks supplier lead time performance over recent months for each vendor. Monitoring these trends helps identify delays, assess supplier reliability, and support vendor selection decisions."
+              tooltip="Line chart tracking each vendor's actual delivery lead time over the past 4 months, used to monitor vendor reliability and catch slippage early."
             >
               <DynamicChart
                 type="line"

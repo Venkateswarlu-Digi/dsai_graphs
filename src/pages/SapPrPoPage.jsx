@@ -52,7 +52,7 @@ export default function SapPrPoPage({ onNavigate }) {
               title="PR/PO Activity — 7 Days"
               tag="daily volume"
               height="sm"
-              tooltip="Shows the daily volume of Purchase Requisitions (PRs) and Purchase Orders (POs) processed over the past seven days. This helps monitor procurement activity, automation throughput, and order processing trends."
+              tooltip="Combo chart of daily auto-generated purchase requisitions, purchase orders raised, and job-triggered procurement events over the past week, showing SAP-side procurement throughput."
             >
               <SapActivityChart data={graphs.pr_po_activity_timeline} />
             </ChartCard>
@@ -60,7 +60,7 @@ export default function SapPrPoPage({ onNavigate }) {
               title="Consumption Trend by Category"
               tag="weekly units"
               height="sm"
-              tooltip="Displays weekly parts consumption trends across major inventory categories. Tracking these trends helps identify demand patterns, seasonal changes, and categories requiring replenishment planning."
+              tooltip="Line chart tracking weekly parts consumption units across major categories (Engine, Undercarriage, Hydraulics, Filters, Transmission), useful for spotting seasonal or demand shifts."
             >
               <DynamicChart
                 type="line"
@@ -122,7 +122,7 @@ export default function SapPrPoPage({ onNavigate }) {
               title="Vendor ETA Prediction Accuracy"
               tag="predicted vs actual"
               height="sm"
-              tooltip="Compares predicted delivery accuracy with actual on-time delivery performance for each vendor. This helps evaluate supplier reliability and improve procurement planning."
+              tooltip="Bar chart comparing each vendor's predicted delivery ETA accuracy against their actual on-time delivery percentage, used to evaluate vendor forecasting reliability."
             >
               <DynamicChart
                 labels={graphs.eta_prediction_accuracy.map(item => item.vendor_name)}
@@ -145,7 +145,7 @@ export default function SapPrPoPage({ onNavigate }) {
               title="Shortage Alerts by Severity"
               tag="notified"
               height="sm"
-              tooltip="Shows the number of inventory shortage alerts grouped by severity level, along with the number of affected SLA-critical jobs. This enables teams to prioritize high-impact shortages and reduce service disruptions."
+              tooltip="Bar chart showing total shortage alerts and the SLA-impacted job count for each severity level, summarizing the day's most urgent supply issues."
             >
               <DynamicChart
                 labels={graphs.shortage_alerts_by_severity.map(item => item.severity)}

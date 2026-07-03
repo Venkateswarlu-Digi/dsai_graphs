@@ -62,7 +62,7 @@ export default function DemandForecastPage({ onNavigate }) {
               title="Forecast vs Actual — 90d"
               tag="job_count · weekly · 80% CI"
               height="sm"
-              tooltip="Compares forecasted demand with actual demand over the last 90 days. The shaded 80% confidence interval represents the expected forecast range and helps identify deviations between predicted and actual demand."
+              tooltip="Detailed line chart plotting actual job-count demand against the model's p50 forecast, with a shaded p10–p90 confidence band, over a 90-day weekly view."
             >
               <ForecastTrend data={graphs.demand_trend_line_all_parts} />
             </ChartCard>
@@ -70,7 +70,7 @@ export default function DemandForecastPage({ onNavigate }) {
               title="Demand by Category (30d)"
               tag="predicted_qty"
               height="sm"
-              tooltip="Displays the predicted demand for each inventory category over the next 30 days. Higher bars indicate categories expected to require more units, helping prioritize inventory planning and replenishment."
+              tooltip="Bar chart showing the total predicted parts demand for the next 30 days, broken down by category, to prioritize which categories need attention."
             >
               <DynamicChart
                 labels={graphs.demand_by_category_bar.slice(0, 6).map(item => item.category)}
@@ -92,7 +92,7 @@ export default function DemandForecastPage({ onNavigate }) {
     title="Top Parts — Stock vs Forecast"
     tag="gap analysis"
     height="sm"
-    tooltip="Compares current inventory with the projected 30-day demand for the highest-priority parts. Large gaps between stock on hand and forecasted demand highlight parts that may require replenishment to prevent stock shortages."
+    tooltip="Bar chart comparing current stock on hand against 30-day forecasted demand for the top 5 highest-demand parts, exposing potential supply gaps."
   >
     <DynamicChart
       labels={topParts.map(item => item.part_number)}
@@ -115,7 +115,7 @@ export default function DemandForecastPage({ onNavigate }) {
     title="Movement Classification"
     tag="portfolio split"
     height="sm"
-    tooltip="Shows the distribution of inventory based on movement categories such as fast-, medium-, and slow-moving items. This helps identify stock turnover patterns and supports inventory optimization."
+    tooltip="Donut chart splitting the parts portfolio into Fast, Medium, Slow, and Dead movers based on consumption velocity, useful for inventory strategy decisions."
   >
     <DynamicChart
       type="doughnut"

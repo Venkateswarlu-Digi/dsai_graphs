@@ -68,7 +68,7 @@ export default function AnomalyDetectorPage({ onNavigate }) {
               title="Anomaly Timeline — 7 Days"
               tag="daily · stacked"
               height="sm"
-              tooltip="Displays the daily count of detected anomalies over the past seven days, categorized by Critical and Warning severity. This helps identify spikes in unusual inventory consumption and monitor operational stability."
+              tooltip="Stacked daily bar chart showing the count of Critical and Warning consumption anomalies detected each day over the past week."
             >
               <DynamicChart
                 stacked
@@ -92,7 +92,7 @@ export default function AnomalyDetectorPage({ onNavigate }) {
               title="Anomalies by Category"
               tag="avg z-score"
               height="sm"
-              tooltip="Shows the average Z-score of detected anomalies across inventory categories. Higher Z-scores indicate greater deviation from expected consumption patterns and help identify categories requiring investigation."
+              tooltip="Bar chart showing the average anomaly z-score per part category, indicating which categories are showing the most abnormal consumption patterns."
             >
               <DynamicChart
                 labels={graphs.anomaly_by_category_bar.map(item => item.category)}
@@ -114,7 +114,7 @@ export default function AnomalyDetectorPage({ onNavigate }) {
               title="Z-Score Distribution"
               tag="histogram"
               height="sm"
-              tooltip="Illustrates the distribution of anomaly Z-scores across predefined ranges. The histogram highlights the frequency of normal, warning, and critical anomalies, providing an overview of anomaly severity."
+              tooltip="Histogram showing how many parts fall into each statistical anomaly severity band (from mild to critical z-scores), giving a sense of overall anomaly intensity."
             >
               <DynamicChart
                 labels={graphs.z_score_distribution_histogram.map(item => item.z_score_band)}
