@@ -109,28 +109,6 @@ export default function AnomalyDetectorPage({ onNavigate }) {
                 ]}
               />
             </ChartCard>
-
-            <ChartCard
-              title="Z-Score Distribution"
-              tag="histogram"
-              height="sm"
-              tooltip="Histogram showing how many parts fall into each statistical anomaly severity band (from mild to critical z-scores), giving a sense of overall anomaly intensity."
-            >
-              <DynamicChart
-                labels={graphs.z_score_distribution_histogram.map(item => item.z_score_band)}
-                datasets={[
-                  {
-                    label: "Count",
-                    data: graphs.z_score_distribution_histogram.map(item => item.count),
-                    backgroundColor: graphs.z_score_distribution_histogram.map(item =>
-                      item.severity === "CRITICAL"
-                        ? `${CHART_COLORS.danger}D9`
-                        : `${CHART_COLORS.accent}CC`
-                    ),
-                  },
-                ]}
-              />
-            </ChartCard>
           </div>
 
           <div className="panel anomaly-action-panel">

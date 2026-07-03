@@ -54,18 +54,6 @@ export default function Overview({ active = 'overview', onNavigate }) {
             </ChartCard>
 
             <ChartCard
-              title="Stockout Risk Split"
-              tooltip="Donut chart showing the current portfolio of parts broken into Critical, High, Medium, and Low stockout risk buckets, so you can gauge overall risk exposure at a glance."
-              tag={charts.stockoutRiskDonut.tag}
-              height="sm"
-            >
-              <RiskDonut
-                labels={charts.stockoutRiskDonut.labels}
-                data={charts.stockoutRiskDonut.data}
-              />
-            </ChartCard>
-
-            <ChartCard
               title="Risk Trend — 6 Weeks"
               tooltip="Stacked bar chart tracking how many parts fell into Critical, High, and Medium risk each week over the past 6 weeks, showing whether risk is improving or worsening."
               tag={charts.riskTrend.tag}
