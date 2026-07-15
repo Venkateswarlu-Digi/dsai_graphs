@@ -11,7 +11,6 @@ import PriorityActions from '../components/PriorityActions';
 import ModelInfo from '../components/ModelInfo';
 
 import DemandTrend from '../assets/charts/DemandTrend';
-import RiskDonut from '../assets/charts/RiskDonut';
 import RiskTrend from '../assets/charts/RiskTrend';
 import JobsRisk from '../assets/charts/JobsRisk';
 

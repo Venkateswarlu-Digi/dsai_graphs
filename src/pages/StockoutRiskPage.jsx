@@ -1,5 +1,7 @@
 import '../styles/dashboard.css';
 import stockoutJson from '../data/Stockout_Risk_Scoring.json';
+import useDashboardData from '../hooks/useDashboardData';
+import NetworkStatus from '../components/NetworkStatus';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import KPICard from '../components/KPICard';
@@ -9,10 +11,7 @@ import RiskTrend from '../assets/charts/RiskTrend';
 import RiskScatter from '../assets/charts/RiskScatter';
 import { CHART_COLORS } from '../assets/charts/chartSetup';
 
-const branchNames = {
-  'BR-NPR-01': 'Nagpur',
-  'BR-CHN-02': 'Chennai',
-};
+const branchNames = new Proxy({}, { get: (_, branchId) => branchId });
 
 function flatten(table) {
   return Object.values(table).flat();
@@ -22,11 +21,23 @@ function severityClass(value) {
   return String(value).toLowerCase();
 }
 
+function rowKey(row) {
+  return `${row.part_number}-${row.branch_id}`;
+}
+
+function autoPrRaised(row) {
+  return row.auto_pr_raised ?? row.auto_pr_triggered ?? false;
+}
+
 export default function StockoutRiskPage({ onNavigate }) {
-  const { metadata, summary, graph_data: graphs, forecast_table: table } = stockoutJson.result;
-  const forecastRows = flatten(table);
-  const detailsByPart = Object.fromEntries(forecastRows.map(row => [row.part_number, row]));
-  const alerts = graphs.auto_pr_trigger_log_today.map(alert => ({ ...alert, ...detailsByPart[alert.part_number] }));
+  const { data, loading, error, reload } = useDashboardData('stockout', stockoutJson.result);
+  const { metadata, summary, graph_data: graphs, forecast_table: table } = data;
+  const forecastRows = flatten(table).sort((first, second) => second.stockout_risk_pct - first.stockout_risk_pct);
+  const detailsByPartAndBranch = Object.fromEntries(forecastRows.map(row => [rowKey(row), row]));
+  const alerts = graphs.auto_pr_trigger_log_today.map(alert => ({
+    ...detailsByPartAndBranch[rowKey(alert)],
+    ...alert, // The trigger log is the source of truth for PR state and alert timing.
+  }));
   const riskTrend = graphs.risk_trend_over_time.map(item => ({
     d: new Date(`${item.period_date}T00:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
     cr: item.critical_count,
@@ -51,6 +62,7 @@ export default function StockoutRiskPage({ onNavigate }) {
         />
 
         <div className="stockout-content">
+          <NetworkStatus loading={loading} error={error} onRetry={reload} />
           <div className="stockout-intro">
             <div>
               <h2>Stockout Risk Scoring — Sub-model 4.2</h2>
@@ -137,8 +149,8 @@ export default function StockoutRiskPage({ onNavigate }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {alerts.map((row, index) => (
-                    <tr key={row.alert_id}>
+                  {forecastRows.map((row, index) => (
+                    <tr key={row.prediction_id ?? row.alert_id}>
                       <td>{index + 1}</td>
                       <td><strong>{row.part_number}</strong><small>{row.part_description ?? 'Priority stockout alert'}</small></td>
                       <td>{row.branch_name?.replace(' Branch', '') ?? branchNames[row.branch_id]}</td>
@@ -149,7 +161,7 @@ export default function StockoutRiskPage({ onNavigate }) {
                       <td className={(row.days_of_cover ?? 0) < (row.vendor_lead_time_days ?? 99) ? 'danger-text' : 'good-text'}>{row.days_of_cover != null ? `${row.days_of_cover}d` : '—'}</td>
                       <td>{row.vendor_lead_time_days != null ? `${row.vendor_lead_time_days}d` : '—'}</td>
                       <td>{row.predicted_qty_30d ?? row.rec_order_qty}</td>
-                      <td><span className={`table-badge ${row.auto_pr_raised ? 'created' : 'pending'}`}>{row.auto_pr_raised ? 'PR Raised' : 'Pending'}</span></td>
+                      <td><span className={`table-badge ${autoPrRaised(row) ? 'created' : 'pending'}`}>{autoPrRaised(row) ? 'PR Raised' : 'Pending'}</span></td>
                       <td><button className="table-action">⚡ Expedite</button> <button className="table-action muted">Review</button></td>
                     </tr>
                   ))}

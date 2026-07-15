@@ -1,5 +1,7 @@
 import '../styles/dashboard.css';
 import anomalyJson from '../data/Anomaly_Detector.json';
+import useDashboardData from '../hooks/useDashboardData';
+import NetworkStatus from '../components/NetworkStatus';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import KPICard from '../components/KPICard';
@@ -7,34 +9,16 @@ import ChartCard from '../components/ChartCard';
 import DynamicChart from '../assets/charts/DynamicChart';
 import { CHART_COLORS } from '../assets/charts/chartSetup';
 
-const branches = {
-  'BR-NGR-01': 'Nagpur',
-  'BR-CHN-02': 'Chennai',
-};
-
-const fallbackParts = {
-  '5I-7951': ['Hydraulic Piston Seal', 'Hydraulics'],
-  '4T-1234': ['Track Link Assembly', 'Undercarriage'],
-};
+const branches = new Proxy({}, { get: (_, branchId) => branchId });
 
 const dateLabel = value => new Date(`${value}T00:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 
 export default function AnomalyDetectorPage({ onNavigate }) {
-  const { metadata, summary, graph_data: graphs, forecast_table: table } = anomalyJson.result;
-  const criticalDetails = Object.fromEntries(table.CRITICAL.map(row => [row.part_number, row]));
-  const anomalies = graphs.anomaly_consumption_detail.map((item, index) => ({
-    anomaly_id: `ANO-AD-${String(index + 1).padStart(3, '0')}`,
-    part_description: fallbackParts[item.part_number]?.[0] ?? 'Monitored Part',
-    part_category: fallbackParts[item.part_number]?.[1] ?? 'Parts',
-    branch_name: `${branches[item.branch_id]} Branch`,
-    review_status: item.severity === 'CRITICAL' ? 'PENDING' : 'REVIEW',
-    auto_pr_blocked: item.severity === 'CRITICAL' && item.direction === 'SPIKE',
-    possible_cause_hint: item.direction === 'SPIKE'
-      ? 'Unusual consumption spike detected. Validate jobs and branch stock movement before approving replenishment.'
-      : 'Unexpected consumption drop. Verify branch operations, telemetry and held jobs.',
-    ...item,
-    ...criticalDetails[item.part_number],
-  }));
+  const { data, loading, error, reload } = useDashboardData('anomaly', anomalyJson.result);
+  const { metadata, summary, graph_data: graphs, forecast_table: table } = data;
+  const anomalies = Object.values(table)
+    .flat()
+    .sort((first, second) => Math.abs(second.z_score) - Math.abs(first.z_score));
 
   const kpis = [
     { label: 'Anomalies Today', value: summary.anomalies_detected_today, delta: `avg critical z-score: ${summary.avg_z_score_critical}`, type: 'alert', deltaDir: 'down' },
@@ -53,6 +37,7 @@ export default function AnomalyDetectorPage({ onNavigate }) {
         />
 
         <div className="anomaly-content">
+          <NetworkStatus loading={loading} error={error} onRetry={reload} />
           <div className="anomaly-intro">
             <div>
               <h2>Consumption Anomaly Detector — Sub-model 4.4</h2>

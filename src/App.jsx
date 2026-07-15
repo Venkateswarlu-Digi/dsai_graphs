@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import Overview from './pages/Overview';
 import DemandForecastPage from './pages/DemandForecastPage';
 import StockoutRiskPage from './pages/StockoutRiskPage';
 import SafetyStockPage from './pages/SafetyStockPage';
@@ -9,9 +8,9 @@ import SapPrPoPage from './pages/SapPrPoPage';
 export default function App() {
   const [page, setPage] = useState('overview');
 
-  if (page === 'overview' || page === 'health') {
-    return <Overview active={page} onNavigate={setPage} />;
-  }
+  // if (page === 'overview' || page === 'health') {
+  //   return <Overview active={page} onNavigate={setPage} />;
+  // }
 
   if (page === 'demand') {
     return <DemandForecastPage onNavigate={setPage} />;
@@ -33,5 +32,5 @@ export default function App() {
     return <SapPrPoPage onNavigate={setPage} />;
   }
 
-  return <Overview active="overview" onNavigate={setPage} />;
+  return <DemandForecastPage active="overview" onNavigate={setPage} />;
 }

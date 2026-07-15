@@ -1,5 +1,7 @@
 import '../styles/dashboard.css';
 import sapJson from '../data/SAP_PR.json';
+import useDashboardData from '../hooks/useDashboardData';
+import NetworkStatus from '../components/NetworkStatus';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import KPICard from '../components/KPICard';
@@ -8,17 +10,16 @@ import DynamicChart from '../assets/charts/DynamicChart';
 import SapActivityChart from '../assets/charts/SapActivityChart';
 import { CHART_COLORS } from '../assets/charts/chartSetup';
 
-const branchNames = {
-  'BR-NGR-03': 'Nagpur',
-  'BR-CHN-02': 'Chennai'
-};
-const categories = ['Engine', 'Undercarriage', 'Hydraulics', 'Filters', 'Transmission'];
+const branchNames = new Proxy({}, { get: (_, branchId) => branchId });
 const dateLabel = value => value ? new Date(`${value}T00:00:00`).toLocaleDateString('en-CA') : '—';
 const money = value => `₹${(value / 100000).toFixed(2)}L`;
 
 export default function SapPrPoPage({ onNavigate }) {
-  const { metadata, summary, graph_data: graphs, forecast_table: table } = sapJson.result;
+  const { data, loading, error, reload } = useDashboardData('sap', sapJson.result);
+  const { metadata, summary, graph_data: graphs, forecast_table: table } = data;
   const actionRows = Object.values(table).flat();
+  const categories = Object.keys(graphs.consumption_analytics_category_trend[0] ?? {})
+    .filter(key => key !== 'period_date');
 
   const kpis = [
     { label: 'Auto-PRs Raised', value: summary.sap_prs_auto_raised_today, delta: `PO value today: ${money(summary.total_po_value_today_inr)}`, deltaDir: 'up' },
@@ -37,6 +38,7 @@ export default function SapPrPoPage({ onNavigate }) {
         />
 
         <div className="sap-content">
+          <NetworkStatus loading={loading} error={error} onRetry={reload} />
           <div className="sap-intro">
             <div>
               <h2>SAP PR/PO & Parts Intelligence — Sub-model 4.5</h2>

@@ -1,5 +1,7 @@
 import '../styles/dashboard.css';
 import safetyJson from '../data/Safety_Stock_Lead_Time_Optimiser.json';
+import useDashboardData from '../hooks/useDashboardData';
+import NetworkStatus from '../components/NetworkStatus';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import KPICard from '../components/KPICard';
@@ -7,22 +9,23 @@ import ChartCard from '../components/ChartCard';
 import DynamicChart from '../assets/charts/DynamicChart';
 import { CHART_COLORS } from '../assets/charts/chartSetup';
 
-const branchNames = {
-  'BR-CHE-01': 'Chennai',
-  'BR-NGR-03': 'Nagpur'
-};
+const branchNames = new Proxy({}, { get: (_, branchId) => branchId });
 
 const inr = value => `₹${(value / 100000).toFixed(value >= 100000 ? 1 : 2)}L`;
 const dateLabel = value => new Date(`${value}T00:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 
 export default function SafetyStockPage({ onNavigate }) {
-  const { metadata, summary, graph_data: graphs, forecast_table: table } = safetyJson.result;
+  const { data, loading, error, reload } = useDashboardData('safety', safetyJson.result);
+  const { metadata, summary, graph_data: graphs, forecast_table: table } = data;
   const stockRecommendations = table.SAFETY_STOCK_INCREASE;
   const vendorSwitch = table.VENDOR_SWITCH[0];
   const vendorNames = Object.fromEntries(graphs.vendor_lead_time_performance_bar.map(vendor => [vendor.vendor_id, vendor.vendor_name]));
+  const netInvestmentLabel = summary.net_investment_change_inr >= 0
+    ? `net investment: ${inr(summary.net_investment_change_inr)} additional`
+    : `net reduction: ${inr(Math.abs(summary.net_investment_change_inr))}`;
 
   const kpis = [
-    { label: 'Increase Recommended', value: summary.parts_with_safety_stock_increase_recommended, delta: `net investment: ${inr(summary.net_investment_change_inr)} additional`, deltaDir: 'up' },
+    { label: 'Increase Recommended', value: summary.parts_with_safety_stock_increase_recommended, delta: netInvestmentLabel, deltaDir: 'up' },
     { label: 'Decrease Recommended', value: summary.parts_with_safety_stock_decrease_recommended, delta: 'over-stocked · free up capital', deltaDir: 'up' },
     { label: 'Vendor Switch Recs', value: summary.vendor_switch_recommendations, delta: 'Hydraulics · CatParts Direct', type: 'alert-amb', deltaDir: 'warn' },
     { label: 'Stockout Prevention Value', value: `₹${(summary.estimated_stockout_prevention_value_inr / 10000000).toFixed(2)}Cr`, delta: 'est. savings if recs accepted', deltaDir: 'up' },
@@ -38,6 +41,7 @@ export default function SafetyStockPage({ onNavigate }) {
         />
 
         <div className="safety-content">
+          <NetworkStatus loading={loading} error={error} onRetry={reload} />
           <div className="safety-intro">
             <div>
               <h2>Safety Stock Optimiser — Sub-model 4.3</h2>
@@ -162,7 +166,7 @@ export default function SafetyStockPage({ onNavigate }) {
             </div>
           </div>
 
-          <div className="panel vendor-switch">
+          {vendorSwitch && <div className="panel vendor-switch">
             <h3>Vendor Switch Recommendation <span className="tag">Hydraulics · CatParts Direct</span></h3>
             <div className="vendor-switch-grid">
               <div className="switch-vendor current">
@@ -181,7 +185,7 @@ export default function SafetyStockPage({ onNavigate }) {
             </div>
             <p>Parts affected: <b>{vendorSwitch.parts_affected.join(', ')}</b> · branches: <b>{vendorSwitch.branches_affected.map(id => branchNames[id]).join(', ')}</b> · lead-time reduction: <b>{vendorSwitch.lead_time_reduction_days}d</b> · risk reduction: <b>{vendorSwitch.expected_stockout_risk_reduction_pct}%</b></p>
             <button className="table-action">✓ Accept Switch Recommendation</button>
-          </div>
+          </div>}
 
           <div className="foot-note">
             <span>model_name: {metadata.model_name} · model_version: {metadata.model_version}</span>

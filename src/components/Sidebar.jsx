@@ -1,5 +1,5 @@
 const NAV_ITEMS = [
-  { key: 'overview', label: 'Overview' },
+  // { key: 'overview', label: 'Overview' },
   { key: 'demand', label: 'Demand Forecast', count: '4.1', cls: 'cnt-sky' },
   { key: 'stockout', label: 'Stockout Risk', count: '38', cls: 'cnt-red' },
   { key: 'safety', label: 'Safety Stock', count: '4.3', cls: 'cnt-sky' },
@@ -34,13 +34,13 @@ export default function Sidebar({ active = 'overview', onNavigate }) {
         </div>
       ))}
 
-      <div className="nav-label">Platform</div>
+      {/* <div className="nav-label">Platform</div>
       <div
         className={`nav-item ${active === 'health' ? 'active' : ''}`}
         onClick={() => handleClick('health')}
       >
         <span className="dot" /> Model Health
-      </div>
+      </div> */}
 
       <div className="sidebar-foot">
         v1.0 · Forecast run

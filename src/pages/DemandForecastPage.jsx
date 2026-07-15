@@ -1,5 +1,7 @@
 import '../styles/dashboard.css';
 import demandJson from '../data/Demand_Forecast.json';
+import useDashboardData from '../hooks/useDashboardData';
+import NetworkStatus from '../components/NetworkStatus';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import KPICard from '../components/KPICard';
@@ -27,9 +29,13 @@ function confidenceClass(value) {
 }
 
 export default function DemandForecastPage({ onNavigate }) {
-  const { metadata, summary, graph_data: graphs, forecast_table: table } = demandJson.result;
+  const { data, loading, error, reload } = useDashboardData('demand', demandJson.result);
+  const { metadata, summary, graph_data: graphs, forecast_table: table } = data;
   const predictions = allPredictions(table);
-  const topParts = predictions.filter(row => row.predicted_qty > 0);
+  const topParts = predictions
+    .filter(row => row.predicted_qty > 0)
+    .sort((first, second) => second.predicted_qty - first.predicted_qty)
+    .slice(0, 5);
   const peak = graphs.monsoon_demand_uplift.reduce((best, item) =>
     item.monsoon_uplift_pct > best.monsoon_uplift_pct ? item : best
   );
@@ -53,6 +59,7 @@ export default function DemandForecastPage({ onNavigate }) {
         />
 
         <div className="demand-content">
+          <NetworkStatus loading={loading} error={error} onRetry={reload} />
           <div className="kpis demand-kpis">
             {kpis.map(kpi => <KPICard key={kpi.label} {...kpi} />)}
           </div>
@@ -153,8 +160,8 @@ export default function DemandForecastPage({ onNavigate }) {
                         <td>{row.branch_name.replace(' Branch', '')}</td>
                         <td><span className="category-chip">{row.part_category}</span></td>
                         <td>{row.predicted_qty}</td>
-                        <td>{Math.round(row.predicted_qty * horizon60Ratio)}</td>
-                        <td>{Math.round(row.predicted_qty * horizon90Ratio)}</td>
+                        <td>{row.predicted_qty_60d ?? Math.round(row.predicted_qty * horizon60Ratio)}</td>
+                        <td>{row.predicted_qty_90d ?? Math.round(row.predicted_qty * horizon90Ratio)}</td>
                         <td>{row.stock_on_hand}</td>
                         <td className={row.days_of_cover < row.vendor_lead_time_days ? 'danger-text' : 'good-text'}>{formatDays(row.days_of_cover)}</td>
                         <td>{formatDays(row.vendor_lead_time_days)}</td>
