@@ -24,12 +24,40 @@ export default function SapPrPoPage({ onNavigate }) {
   const categories = Object.keys(graphs.consumption_analytics_category_trend[0] ?? {})
     .filter(key => key !== 'period_date');
 
-  const kpis = [
-    { label: 'Auto-PRs Raised', value: summary.sap_prs_auto_raised_today, delta: `PO value today: ${money(summary.total_po_value_today_inr)}`, deltaDir: 'up' },
-    { label: 'Pending Human Approval', value: summary.sap_prs_pending_human_approval, delta: `${summary.sap_prs_blocked_anomaly} blocked · anomaly review`, type: 'alert-amb', deltaDir: 'warn' },
-    { label: 'Jobs Advanced', value: summary.jobs_advanced_to_next_stage, delta: 'parts readiness triggers sent', deltaDir: 'up' },
-    { label: 'Live Availability Queries', value: summary.real_time_availability_queries_today.toLocaleString('en-IN'), delta: `${summary.eta_predictions_served} ETA predictions served` },
-  ];
+const kpis = [
+  {
+    label: 'Auto-PRs Raised',
+    value: summary.sap_prs_auto_raised_today,
+    delta: `PO value today: ${money(summary.total_po_value_today_inr)}`,
+    deltaDir: 'up',
+    tooltip:
+      'Purchase Requisitions automatically created in SAP today, with no human involvement.',
+  },
+  {
+    label: 'Pending Human Approval',
+    value: summary.sap_prs_pending_human_approval,
+    delta: `${summary.sap_prs_blocked_anomaly} blocked · anomaly review`,
+    type: 'alert-amb',
+    deltaDir: 'warn',
+    tooltip:
+      'PRs that need a person to sign off before proceeding — typically because they are linked to a flagged anomaly.',
+  },
+  {
+    label: 'Jobs Advanced',
+    value: summary.jobs_advanced_to_next_stage,
+    delta: 'parts readiness triggers sent',
+    deltaDir: 'up',
+    tooltip:
+      'Work orders that moved to their next stage today because all required parts became available.',
+  },
+  {
+    label: 'Live Availability Queries',
+    value: summary.real_time_availability_queries_today.toLocaleString('en-IN'),
+    delta: `${summary.eta_predictions_served} ETA predictions served`,
+    tooltip:
+      'Number of real-time stock-check requests served today (e.g. technicians or planners checking part availability).',
+  },
+];
 
   return (
     <div className="shell sap-shell">
@@ -39,7 +67,7 @@ export default function SapPrPoPage({ onNavigate }) {
           title="SAP PR/PO Automation — Sub-model 4.5"
           days={days}
           onDaysChange={setDays}
-          // subtitle="BAPI_PR_CREATE · SAP MM real-time inventory API"
+          subtitle="This is the module that actually writes into SAP and reads live data back from it — it's the operational bridge between everything the other 4 modules calculate and what actually happens in the procurement system. BAPI_PR_CREATE is the specific SAP function used to automatically create Purchase Requisitions. SAP MM stands for SAP Materials Management — SAP's core module for inventory, procurement, and warehouse operations"
         />
 
         <div className="sap-content">
@@ -59,7 +87,7 @@ export default function SapPrPoPage({ onNavigate }) {
               title="PR/PO Activity"
               tag="daily volume"
               height="sm"
-              tooltip="Combo chart of daily auto-generated purchase requisitions, purchase orders raised, and job-triggered procurement events over the past week, showing SAP-side procurement throughput."
+              tooltip="A combo chart showing daily counts of Auto PRs raised (bar), POs Raised (bar), and Job Triggers sent (line) over the past week — gives a sense of the daily operational volume flowing through this automation."
             >
               <SapActivityChart data={graphs.pr_po_activity_timeline} />
             </ChartCard>
@@ -67,7 +95,7 @@ export default function SapPrPoPage({ onNavigate }) {
               title="Consumption Trend by Category"
               tag="weekly units"
               height="sm"
-              tooltip="Line chart tracking weekly parts consumption units across major categories (Engine, Undercarriage, Hydraulics, Filters, Transmission), useful for spotting seasonal or demand shifts."
+              tooltip="A multi-line chart tracking weekly consumption units for every part category simultaneously, useful for spotting which categories' demand is shifting week over week."
             >
               <DynamicChart
                 type="line"
@@ -85,7 +113,7 @@ export default function SapPrPoPage({ onNavigate }) {
           </div>
 
           <div className="panel inventory-panel">
-            <SectionTitle tag="live · updated 4h ago" tooltip="Current SAP MM inventory, reservations, purchase-order quantities, and next delivery estimates.">Real-Time Inventory Status from SAP MM</SectionTitle>
+            <SectionTitle tag="live · updated 4h ago" tooltip="A bar chart comparing each vendor's ETA Accuracy % (how close the predicted delivery date was to the actual delivery date) against their On-Time %, to judge how trustworthy each vendor's delivery estimates are.">Real-Time Inventory Status from SAP MM</SectionTitle>
             <div className="data-table-wrap">
               <table className="data-table inventory-table">
                 <thead><tr><th>Part Number</th><th>Branch</th><th>Stock on Hand</th><th>Reserved</th><th>Effective Available</th><th>Open PO Qty</th><th>Next Delivery ETA</th><th>Status</th></tr></thead>
@@ -152,7 +180,7 @@ export default function SapPrPoPage({ onNavigate }) {
               title="Shortage Alerts by Severity"
               tag="notified"
               height="sm"
-              tooltip="Bar chart showing total shortage alerts and the SLA-impacted job count for each severity level, summarizing the day's most urgent supply issues."
+              tooltip="A grouped bar chart showing Total Alerts vs. SLA-impacting Jobs, broken down by severity tier — highlights where shortages are creating the most contractual/customer exposure, not just the most raw alert volume."
             >
               <DynamicChart
                 labels={graphs.shortage_alerts_by_severity.map(item => item.severity)}
@@ -180,7 +208,7 @@ export default function SapPrPoPage({ onNavigate }) {
           </div>
 
           <div className="panel sap-action-panel">
-            <SectionTitle tag={`${summary.sap_prs_auto_raised_today} created · ${summary.sap_prs_blocked_anomaly} blocked`} tooltip="Purchase requisitions created by SAP automation and requests awaiting anomaly-related approval.">SAP PR/PO Action Log</SectionTitle>
+            <SectionTitle tag={`${summary.sap_prs_auto_raised_today} created · ${summary.sap_prs_blocked_anomaly} blocked`} tooltip="One card is shown per active work order, letting the workshop team see at a glance whether every part they need is actually available">SAP PR/PO Action Log</SectionTitle>
             <div className="data-table-wrap">
               <table className="data-table sap-action-table">
                 <thead><tr><th>PR ID</th><th>Part</th><th>Branch</th><th>Vendor</th><th>Qty</th><th>Value</th><th>Order Date</th><th>Stockout Risk</th><th>SAP Status</th><th>ETA if Today</th><th>Actions</th></tr></thead>

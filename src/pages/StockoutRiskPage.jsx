@@ -48,12 +48,42 @@ export default function StockoutRiskPage({ onNavigate }) {
     md: item.medium_count,
   }));
 
-  const kpis = [
-    { label: 'Critical Parts (≥70%)', value: summary.critical_stockout_parts, delta: `${summary.branches_with_critical_alerts} branches · Hyd + Undercarriage`, type: 'alert', deltaDir: 'down' },
-    { label: 'High Risk (50–70%)', value: summary.high_stockout_parts, delta: 'Auto-PR raised for most', type: 'alert-amb', deltaDir: 'warn' },
-    { label: 'Jobs at Risk', value: summary.jobs_at_risk_if_stockouts_occur, delta: `${summary.sla_breach_risk_jobs} SLA breach · avg 17d delay`, deltaDir: 'down' },
-    { label: 'Value at Stockout Risk', value: `₹${(summary.total_value_at_stockout_risk_inr / 10000000).toFixed(2)}Cr`, delta: 'if no action taken today', deltaDir: 'down' },
-  ];
+const kpis = [
+  {
+    label: 'Critical Parts (≥70%)',
+    value: summary.critical_stockout_parts,
+    delta: `${summary.branches_with_critical_alerts} branches · Hyd + Undercarriage`,
+    type: 'alert',
+    deltaDir: 'down',
+    tooltip:
+      'Number of parts with a stockout risk score of 70% or higher — treated as a near-certain stockout without action today.',
+  },
+  {
+    label: 'High Risk (50–70%)',
+    value: summary.high_stockout_parts,
+    delta: 'Auto-PR raised for most',
+    type: 'alert-amb',
+    deltaDir: 'warn',
+    tooltip:
+      'Parts scoring 50–69% risk — still a strong reorder signal; auto-PR is raised for most of these automatically.',
+  },
+  {
+    label: 'Jobs at Risk',
+    value: summary.jobs_at_risk_if_stockouts_occur,
+    delta: `${summary.sla_breach_risk_jobs} SLA breach · avg 17d delay`,
+    deltaDir: 'down',
+    tooltip:
+      'Number of open work orders that need at least one Critical/High risk part to be completed.',
+  },
+  {
+    label: 'Value at Stockout Risk',
+    value: `₹${(summary.total_value_at_stockout_risk_inr / 10000000).toFixed(2)}Cr`,
+    delta: 'if no action taken today',
+    deltaDir: 'down',
+    tooltip:
+      'Estimated INR value of the current stock on hand for all Critical + High risk parts.',
+  },
+];
 
   return (
     <div className="shell stockout-shell">
@@ -124,7 +154,7 @@ export default function StockoutRiskPage({ onNavigate }) {
           <div className="panel trigger-panel">
             <SectionTitle
               tag={`${summary.auto_pr_triggered_today} raised · ${summary.auto_pr_blocked_anomaly} blocked`}
-              tooltip="Today’s automated purchase-requisition decisions, including any requests held for anomaly review."
+              tooltip="This is a live activity feed of every stockout alert the system evaluated today and the automatic action it took, most recent first. Each entry shows:"
             >Auto PR Trigger Log — Today</SectionTitle>
             <div className="trigger-list">
               {alerts.map(alert => (

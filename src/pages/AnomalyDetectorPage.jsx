@@ -24,11 +24,42 @@ export default function AnomalyDetectorPage({ onNavigate }) {
     .sort((first, second) => Math.abs(second.z_score) - Math.abs(first.z_score));
 
   const kpis = [
-    { label: 'Anomalies Today', value: summary.anomalies_detected_today, delta: `avg critical z-score: ${summary.avg_z_score_critical}`, type: 'alert', deltaDir: 'down' },
-    { label: 'Critical Anomalies', value: summary.critical_anomalies, delta: `z > 4.0 · immediate review`, type: 'alert', deltaDir: 'down' },
-    { label: 'PRs Blocked', value: summary.auto_pr_blocked_due_to_anomaly, delta: 'auto-PR held pending review', type: 'alert-amb', deltaDir: 'warn' },
-    { label: 'Reviewed OK Today', value: summary.anomalies_reviewed_ok_today, delta: `${summary.anomalies_escalated} escalated · ${summary.anomalies_pending_review} pending`, deltaDir: 'up' },
-  ];
+  {
+    label: 'Anomalies Today',
+    value: summary.anomalies_detected_today,
+    delta: `avg critical z-score: ${summary.avg_z_score_critical}`,
+    type: 'alert',
+    deltaDir: 'down',
+    tooltip:
+      'Total number of parts currently flagged as anomalous in the active detection window.',
+  },
+  {
+    label: 'Critical Anomalies',
+    value: summary.critical_anomalies,
+    delta: `z > 4.0 · immediate review`,
+    type: 'alert',
+    deltaDir: 'down',
+    tooltip:
+      'Anomalies with |Z-Score| greater than 4.0 — an extremely unusual deviation, requiring immediate review.',
+  },
+  {
+    label: 'PRs Blocked',
+    value: summary.auto_pr_blocked_due_to_anomaly,
+    delta: 'auto-PR held pending review',
+    type: 'alert-amb',
+    deltaDir: 'warn',
+    tooltip:
+      'Number of automatic Purchase Requisitions currently on hold because they are linked to a flagged anomaly.',
+  },
+  {
+    label: 'Reviewed OK Today',
+    value: summary.anomalies_reviewed_ok_today,
+    delta: `${summary.anomalies_escalated} escalated · ${summary.anomalies_pending_review} pending`,
+    deltaDir: 'up',
+    tooltip:
+      'Anomalies a human has already reviewed and confirmed as legitimate/cleared, today.',
+  },
+];
 
   return (
     <div className="shell anomaly-shell">
@@ -38,7 +69,7 @@ export default function AnomalyDetectorPage({ onNavigate }) {
           title="Anomaly Detector — Sub-model 4.4"
           days={days}
           onDaysChange={setDays}
-          // subtitle="Z-Score + Isolation Forest · |z| > 2.5 = anomaly"
+          subtitle="This module watches every part's weekly consumption and flags anything that looks statistically unusual — either a sudden spike (much more used than normal) or an unexplained drop (much less used than normal, which can indicate a branch shutdown, a system outage, or all related jobs being on hold)."
         />
 
         <div className="anomaly-content">
@@ -55,10 +86,10 @@ export default function AnomalyDetectorPage({ onNavigate }) {
 
           <div className="anomaly-chart-grid">
             <ChartCard
-              title="Anomaly Timeline — 7 Days"
+              title="Anomaly Timeline"
               tag="daily · stacked"
               height="sm"
-              tooltip="Stacked daily bar chart showing the count of Critical and Warning consumption anomalies detected each day over the past week."
+              tooltip="A stacked bar chart of Critical (red) vs Warning (orange) anomaly counts per day over the last week, showing whether anomaly volume is trending up or down."
             >
               <DynamicChart
                 stacked
@@ -82,7 +113,7 @@ export default function AnomalyDetectorPage({ onNavigate }) {
               title="Anomalies by Category"
               tag="avg z-score"
               height="sm"
-              tooltip="Bar chart showing the average anomaly z-score per part category, indicating which categories are showing the most abnormal consumption patterns."
+              tooltip="A bar chart showing the average Z-Score of anomalies within each part category — this highlights which categories are experiencing the most severe (not just the most frequent) deviations from normal."
             >
               <DynamicChart
                 labels={graphs.anomaly_by_category_bar.map(item => item.category)}
@@ -104,7 +135,7 @@ export default function AnomalyDetectorPage({ onNavigate }) {
           <div className="panel anomaly-action-panel">
             <SectionTitle
               tag={`${summary.anomalies_escalated} escalated · ${summary.anomalies_pending_review} pending`}
-              tooltip="Critical anomalies need immediate review because they can block automated purchase requisitions."
+              tooltip="One card is shown per critical anomaly, with everything needed to investigate and act on it:"
             >Critical Anomalies — Requires Immediate Action</SectionTitle>
             {anomalies.filter(item => item.severity === 'CRITICAL').map(item => (
               <div className="anomaly-action-row" key={item.anomaly_id}>

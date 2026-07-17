@@ -27,12 +27,41 @@ export default function SafetyStockPage({ onNavigate }) {
     ? `net investment: ${inr(summary.net_investment_change_inr)} additional`
     : `net reduction: ${inr(Math.abs(summary.net_investment_change_inr))}`;
 
-  const kpis = [
-    { label: 'Increase Recommended', value: summary.parts_with_safety_stock_increase_recommended, delta: netInvestmentLabel, deltaDir: 'up' },
-    { label: 'Decrease Recommended', value: summary.parts_with_safety_stock_decrease_recommended, delta: 'over-stocked · free up capital', deltaDir: 'up' },
-    { label: 'Vendor Switch Recs', value: summary.vendor_switch_recommendations, delta: 'Hydraulics · CatParts Direct', type: 'alert-amb', deltaDir: 'warn' },
-    { label: 'Stockout Prevention Value', value: `₹${(summary.estimated_stockout_prevention_value_inr / 10000000).toFixed(2)}Cr`, delta: 'est. savings if recs accepted', deltaDir: 'up' },
-  ];
+const kpis = [
+  {
+    label: 'Increase Recommended',
+    value: summary.parts_with_safety_stock_increase_recommended,
+    delta: netInvestmentLabel,
+    deltaDir: 'up',
+    tooltip:
+      'Number of parts where the formula says current safety stock is too low and should be raised, to reduce stockout risk.',
+  },
+  {
+    label: 'Decrease Recommended',
+    value: summary.parts_with_safety_stock_decrease_recommended,
+    delta: 'over-stocked · free up capital',
+    deltaDir: 'up',
+    tooltip:
+      'Number of parts currently over-stocked relative to what the formula says is actually needed.',
+  },
+  {
+    label: 'Vendor Switch Recs',
+    value: summary.vendor_switch_recommendations,
+    delta: 'Hydraulics · CatParts Direct',
+    type: 'alert-amb',
+    deltaDir: 'warn',
+    tooltip:
+      'Number of vendors currently recommended for replacement, because their on-time delivery has fallen below the 85% reliability threshold.',
+  },
+  {
+    label: 'Stockout Prevention Value',
+    value: `₹${(summary.estimated_stockout_prevention_value_inr / 10000000).toFixed(2)}Cr`,
+    delta: 'est. savings if recs accepted',
+    deltaDir: 'up',
+    tooltip:
+      'Estimated savings, in avoided stockout cost, if all current recommendations on this page are accepted.',
+  },
+];
 
   return (
     <div className="shell safety-shell">
@@ -42,7 +71,7 @@ export default function SafetyStockPage({ onNavigate }) {
           title="Safety Stock Optimiser — Sub-model 4.3"
           days={days}
           onDaysChange={setDays}
-          // subtitle={`SS = Z × √(L×σd² + d²×σL²) · Service level ${metadata.granularity}`}
+          subtitle={"This module calculates how much buffer stock each part should hold to protect against both demand variability and vendor delivery uncertainty, recalculated weekly."}
         />
 
         <div className="safety-content">
@@ -62,7 +91,7 @@ export default function SafetyStockPage({ onNavigate }) {
               title="Safety Stock: Current vs Recommended"
               tag="avg by category"
               height="sm"
-              tooltip="Bar chart comparing existing safety stock quantities to the model's statistically recommended quantities for each category, showing where buffers should be adjusted and by how much."
+              tooltip="A grouped bar chart comparing the average current safety stock level (grey) against the formula's recommended level (colored), per part category. Where the recommended bar is taller, that category is under-buffered; where it's shorter, that category is over-buffered."
             >
               <DynamicChart
                 labels={graphs.safety_stock_current_vs_recommended_bar.map(item => item.category)}
@@ -94,7 +123,7 @@ export default function SafetyStockPage({ onNavigate }) {
               title="Vendor Lead Time Trend"
               tag="4 vendors · 4 months"
               height="sm"
-              tooltip="Line chart tracking each vendor's actual delivery lead time over the past 4 months, used to monitor vendor reliability and catch slippage early."
+              tooltip="A line chart tracking each vendor's actual average delivery lead time over the last several months — one line per vendor. Rising lines indicate a vendor's reliability is deteriorating over time, which directly increases the safety stock the formula recommends for parts sourced from them."
             >
               <DynamicChart
                 type="line"
@@ -112,7 +141,7 @@ export default function SafetyStockPage({ onNavigate }) {
           </div>
 
           <div className="panel vendor-dashboard">
-            <SectionTitle tag="lead_time · online_%" tooltip="Supplier lead-time reliability, variation, on-time delivery rate, and risk tier.">Vendor Performance Dashboard</SectionTitle>
+            <SectionTitle tag="lead_time · online_%" tooltip=" A list of parts that need a purchase order raised soon to maintain adequate safety stock. Each line shows the part, branch, vendor, quantity to order, and the recommended order date, with a visual timeline bar and a status badge">Vendor Performance Dashboard</SectionTitle>
             <div className="vendor-card-grid">
               {graphs.vendor_lead_time_performance_bar.map(vendor => (
                 <div className={`vendor-card tier-${vendor.risk_tier.toLowerCase()}`} key={vendor.vendor_id}>
@@ -132,7 +161,7 @@ export default function SafetyStockPage({ onNavigate }) {
           </div>
 
           <div className="panel order-schedule">
-            <SectionTitle tag={`${graphs.recommended_order_schedule.length} reminders · date today`} tooltip="Recommended replenishment dates and quantities based on safety-stock requirements and supplier lead times.">Recommended Order Schedule</SectionTitle>
+            <SectionTitle tag={`${graphs.recommended_order_schedule.length} reminders · date today`} tooltip="past the recommended order date; shows how many days overdue ">Recommended Order Schedule</SectionTitle>
             {graphs.recommended_order_schedule.map(order => (
               <div className="schedule-row" key={`${order.part_number}-${order.branch_id}`}>
                 <span><strong>{order.part_number}</strong><small>{branchNames[order.branch_id]} · {vendorNames[order.vendor_id]}</small></span>
