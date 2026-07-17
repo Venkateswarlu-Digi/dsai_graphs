@@ -64,6 +64,7 @@ body{font-size:14px;line-height:1.45;}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(52,214,184,.5)}70%{box-shadow:0 0 0 5px rgba(52,214,184,0)}100%{box-shadow:0 0 0 0 rgba(52,214,184,0)}}
 
 select.filter{background:var(--panel-2);border:1px solid var(--line);color:var(--text);font-family:'Inter';font-size:12px;padding:6px 9px;border-radius:5px;}
+.horizon-filter{min-width:150px;font-size:13px!important;color:var(--text)!important;background:var(--panel)!important;}
 
 .content{padding:22px 28px 48px;flex:1;}
 .api-status{display:flex;align-items:center;gap:10px;margin:0 0 14px;padding:8px 11px;border:1px solid var(--line);border-radius:6px;background:var(--panel-2);color:var(--text-dim);font-size:12px;}
@@ -111,6 +112,7 @@ select.filter{background:var(--panel-2);border:1px solid var(--line);color:var(-
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 18px;}
 .panel h3{font-size:12.5px;margin:0 0 12px;font-weight:600;color:var(--text);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;}
 .panel h3 span.tag{font-size:10px;color:var(--text-faint);font-family:var(--mono);font-weight:400;}
+.panel-heading-with-tooltip{display:inline-flex;align-items:center;}
 .chart-wrap{position:relative;height:230px;}
 .chart-wrap.tall{height:270px;}
 .chart-wrap.sm{height:180px;}
@@ -140,6 +142,8 @@ select.filter{background:var(--panel-2);border:1px solid var(--line);color:var(-
 .data-table-wrap{width:100%;overflow:auto;}
 .data-table{width:100%;min-width:900px;border-collapse:collapse;font-size:11px;}
 .data-table th{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);color:var(--text-faint);font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.55px;white-space:nowrap;}
+.table-header-help{display:inline-flex;align-items:center;}
+.table-header-help .info-button{font-size:11px;}
 .data-table td{padding:10px;border-bottom:1px solid #202630;color:var(--text-dim);white-space:nowrap;max-width:260px;overflow:hidden;text-overflow:ellipsis;}
 .data-table tbody tr:hover{background:rgba(255,255,255,.018);}
 .data-table td:first-child{color:var(--text);font-family:var(--mono);}

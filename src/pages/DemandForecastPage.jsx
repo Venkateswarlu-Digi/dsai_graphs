@@ -1,7 +1,9 @@
 import '../styles/dashboard.css';
+import { useState } from 'react';
 import demandJson from '../data/Demand_Forecast.json';
 import useDashboardData from '../hooks/useDashboardData';
 import NetworkStatus from '../components/NetworkStatus';
+import InfoTooltip from '../components/InfoTooltip';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import KPICard from '../components/KPICard';
@@ -29,7 +31,8 @@ function confidenceClass(value) {
 }
 
 export default function DemandForecastPage({ onNavigate }) {
-  const { data, loading, error, reload } = useDashboardData('demand', demandJson.result);
+  const [days, setDays] = useState(30);
+  const { data, loading, error, reload } = useDashboardData('demand', demandJson.result, days);
   const { metadata, summary, graph_data: graphs, forecast_table: table } = data;
   const predictions = allPredictions(table);
   const topParts = predictions
@@ -43,25 +46,52 @@ export default function DemandForecastPage({ onNavigate }) {
   const horizon90Ratio = summary.total_predicted_units_90d / summary.total_predicted_units_30d;
 
   const kpis = [
-    { label: 'Parts Forecasted', value: number.format(summary.total_parts_forecasted), delta: `${summary.total_branches_covered} branches · daily grain` },
-    { label: 'Units Forecast (30d)', value: number.format(summary.total_predicted_units_30d), delta: `₹${compact.format(summary.total_forecast_value_inr_30d)} procurement est.`, deltaDir: 'up' },
-    { label: 'Forecast Accuracy', value: `${summary.model_accuracy.forecast_accuracy_pct}%`, delta: `MAPE ${summary.model_accuracy.wape_overall}% · MAPE Fast ${summary.model_accuracy.mape_fast_movers}%`, deltaDir: 'up' },
-    { label: 'Peak Demand Uplift', value: `+${peak.monsoon_uplift_pct}%`, delta: `${peak.category} · monsoon peak`, type: 'alert-amb', deltaDir: 'warn' },
+    {
+      label: 'Parts Forecasted',
+      value: number.format(summary.total_parts_forecasted),
+      delta: `${summary.total_branches_covered} branches · daily grain`,
+      tooltip: 'Total number of spare parts for which the AI model generated demand forecasts across all branches.'
+    },
+    {
+      label: 'Units Forecast (30d)',
+      value: number.format(summary.total_predicted_units_30d),
+      delta: `₹${compact.format(summary.total_forecast_value_inr_30d)} procurement est.`,
+      deltaDir: 'up',
+      tooltip: 'Expected demand for the next 30 days. Procurement estimate is based on forecasted quantity.'
+    },
+    {
+      label: 'Forecast Accuracy',
+      value: `${summary.model_accuracy.forecast_accuracy_pct}%`,
+      delta: `MAPE ${summary.model_accuracy.wape_overall}% · MAPE Fast ${summary.model_accuracy.mape_fast_movers}%`,
+      deltaDir: 'up',
+      tooltip: 'Overall prediction accuracy. Lower MAPE indicates better forecasting performance.'
+    },
+    {
+      label: 'Peak Demand Uplift',
+      value: `+${peak.monsoon_uplift_pct}%`,
+      delta: `${peak.category} · monsoon peak`,
+      type: 'alert-amb',
+      deltaDir: 'warn',
+      tooltip: 'Increase in expected demand during seasonal peaks such as the monsoon.'
+    }
   ];
-
   return (
     <div className="shell demand-shell">
       <Sidebar active="demand" onNavigate={onNavigate} />
       <main className="main demand-page">
         <Header
           title="Demand Forecast — Sub-model 4.1"
-          subtitle={`Part-level forecasting · LightGBM + Prophet + kNN · ${metadata.confidence_level} confidence`}
+          subtitle={"This module predicts how many units of each spare part will be consumed at each branch over the next 30, 60, and 90 days."}
+          days={days}
+          onDaysChange={setDays}
         />
 
         <div className="demand-content">
           <NetworkStatus loading={loading} error={error} onRetry={reload} />
           <div className="kpis demand-kpis">
-            {kpis.map(kpi => <KPICard key={kpi.label} {...kpi} />)}
+            {kpis.map(kpi => (
+              <KPICard key={kpi.label} {...kpi} />
+            ))}
           </div>
 
           <div className="demand-grid demand-grid-top">
@@ -95,50 +125,53 @@ export default function DemandForecastPage({ onNavigate }) {
           </div>
 
           <div className="demand-grid demand-grid-bottom">
-  <ChartCard
-    title="Top Parts — Stock vs Forecast"
-    tag="gap analysis"
-    height="sm"
-    tooltip="Bar chart comparing current stock on hand against 30-day forecasted demand for the top 5 highest-demand parts, exposing potential supply gaps."
-  >
-    <DynamicChart
-      labels={topParts.map(item => item.part_number)}
-      datasets={[
-        {
-          label: "Stock on Hand",
-          data: topParts.map(item => item.stock_on_hand),
-          backgroundColor: `${CHART_COLORS.secondary}B8`,
-        },
-        {
-          label: "30d Forecast",
-          data: topParts.map(item => item.predicted_qty),
-          backgroundColor: `${CHART_COLORS.primary}D9`,
-        },
-      ]}
-    />
-  </ChartCard>
+            <ChartCard
+              title="Top Parts — Stock vs Forecast"
+              tag="gap analysis"
+              height="sm"
+              tooltip="Bar chart comparing current stock on hand against 30-day forecasted demand for the top 5 highest-demand parts, exposing potential supply gaps."
+            >
+              <DynamicChart
+                labels={topParts.map(item => item.part_number)}
+                datasets={[
+                  {
+                    label: "Stock on Hand",
+                    data: topParts.map(item => item.stock_on_hand),
+                    backgroundColor: `${CHART_COLORS.secondary}B8`,
+                  },
+                  {
+                    label: "30d Forecast",
+                    data: topParts.map(item => item.predicted_qty),
+                    backgroundColor: `${CHART_COLORS.primary}D9`,
+                  },
+                ]}
+              />
+            </ChartCard>
 
-  <ChartCard
-    title="Movement Classification"
-    tag="portfolio split"
-    height="sm"
-    tooltip="Donut chart splitting the parts portfolio into Fast, Medium, Slow, and Dead movers based on consumption velocity, useful for inventory strategy decisions."
-  >
-    <DynamicChart
-      type="doughnut"
-      labels={graphs.movement_class_donut.map(item => item.label)}
-      datasets={[
-        {
-          data: graphs.movement_class_donut.map(item => item.value),
-        },
-      ]}
-    />
-  </ChartCard>
-</div>
+            <ChartCard
+              title="Movement Classification"
+              tag="portfolio split"
+              height="sm"
+              tooltip="Donut chart splitting the parts portfolio into Fast, Medium, Slow, and Dead movers based on consumption velocity, useful for inventory strategy decisions."
+            >
+              <DynamicChart
+                type="doughnut"
+                labels={graphs.movement_class_donut.map(item => item.label)}
+                datasets={[
+                  {
+                    data: graphs.movement_class_donut.map(item => item.value),
+                  },
+                ]}
+              />
+            </ChartCard>
+          </div>
           <div className="panel demand-predictions">
             <h3>
-              Part-Level Demand Predictions
-              <span className="tag">primary_table · sortable</span>
+              <span className="panel-heading-with-tooltip">
+                Part-Level Demand Predictions
+                <InfoTooltip text="Part-level forecasts by branch. Compare forecast horizons, stock, days cover, and vendor lead time to prioritize replenishment." />
+              </span>
+``              <span className="tag">primary_table · sortable</span>
             </h3>
             <div className="data-table-wrap">
               <table className="data-table demand-table">

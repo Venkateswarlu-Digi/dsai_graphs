@@ -1,4 +1,5 @@
 import '../styles/dashboard.css';
+import { useState } from 'react';
 import anomalyJson from '../data/Anomaly_Detector.json';
 import useDashboardData from '../hooks/useDashboardData';
 import NetworkStatus from '../components/NetworkStatus';
@@ -6,6 +7,7 @@ import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import KPICard from '../components/KPICard';
 import ChartCard from '../components/ChartCard';
+import SectionTitle from '../components/SectionTitle';
 import DynamicChart from '../assets/charts/DynamicChart';
 import { CHART_COLORS } from '../assets/charts/chartSetup';
 
@@ -14,7 +16,8 @@ const branches = new Proxy({}, { get: (_, branchId) => branchId });
 const dateLabel = value => new Date(`${value}T00:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 
 export default function AnomalyDetectorPage({ onNavigate }) {
-  const { data, loading, error, reload } = useDashboardData('anomaly', anomalyJson.result);
+  const [days, setDays] = useState(30);
+  const { data, loading, error, reload } = useDashboardData('anomaly', anomalyJson.result, days);
   const { metadata, summary, graph_data: graphs, forecast_table: table } = data;
   const anomalies = Object.values(table)
     .flat()
@@ -33,18 +36,20 @@ export default function AnomalyDetectorPage({ onNavigate }) {
       <main className="main anomaly-page">
         <Header
           title="Anomaly Detector — Sub-model 4.4"
-          subtitle="Z-Score + Isolation Forest · |z| > 2.5 = anomaly"
+          days={days}
+          onDaysChange={setDays}
+          // subtitle="Z-Score + Isolation Forest · |z| > 2.5 = anomaly"
         />
 
         <div className="anomaly-content">
           <NetworkStatus loading={loading} error={error} onRetry={reload} />
-          <div className="anomaly-intro">
+          {/* <div className="anomaly-intro">
             <div>
               <h2>Consumption Anomaly Detector — Sub-model 4.4</h2>
               <p>Z-Score (|z| &gt; 2.5 = anomaly, |z| &gt; 4 critical) with Isolation Forest secondary confirmation. Anomalies block auto-PRs until human review.</p>
             </div>
             <span className="method-badge ml"><i /> Z-Score + Isolation Forest</span>
-          </div>
+          </div> */}
 
           <div className="kpis anomaly-kpis">{kpis.map(kpi => <KPICard key={kpi.label} {...kpi} />)}</div>
 
@@ -97,7 +102,10 @@ export default function AnomalyDetectorPage({ onNavigate }) {
           </div>
 
           <div className="panel anomaly-action-panel">
-            <h3>Critical Anomalies — Requires Immediate Action <span className="tag">{summary.anomalies_escalated} escalated · {summary.anomalies_pending_review} pending</span></h3>
+            <SectionTitle
+              tag={`${summary.anomalies_escalated} escalated · ${summary.anomalies_pending_review} pending`}
+              tooltip="Critical anomalies need immediate review because they can block automated purchase requisitions."
+            >Critical Anomalies — Requires Immediate Action</SectionTitle>
             {anomalies.filter(item => item.severity === 'CRITICAL').map(item => (
               <div className="anomaly-action-row" key={item.anomaly_id}>
                 <span className="anomaly-pulse" />
@@ -121,7 +129,7 @@ export default function AnomalyDetectorPage({ onNavigate }) {
           </div>
 
           <div className="panel anomaly-table-panel">
-            <h3>All Anomalies — Detailed View <span className="tag">primary_table</span></h3>
+            <SectionTitle tag="primary_table" tooltip="Detailed anomaly records including consumption deviation, severity, review status, and available actions.">All Anomalies — Detailed View</SectionTitle>
             <div className="data-table-wrap">
               <table className="data-table anomaly-table">
                 <thead>

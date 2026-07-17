@@ -1,4 +1,5 @@
 import '../styles/dashboard.css';
+import { useState } from 'react';
 import sapJson from '../data/SAP_PR.json';
 import useDashboardData from '../hooks/useDashboardData';
 import NetworkStatus from '../components/NetworkStatus';
@@ -6,6 +7,7 @@ import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import KPICard from '../components/KPICard';
 import ChartCard from '../components/ChartCard';
+import SectionTitle from '../components/SectionTitle';
 import DynamicChart from '../assets/charts/DynamicChart';
 import SapActivityChart from '../assets/charts/SapActivityChart';
 import { CHART_COLORS } from '../assets/charts/chartSetup';
@@ -15,7 +17,8 @@ const dateLabel = value => value ? new Date(`${value}T00:00:00`).toLocaleDateStr
 const money = value => `₹${(value / 100000).toFixed(2)}L`;
 
 export default function SapPrPoPage({ onNavigate }) {
-  const { data, loading, error, reload } = useDashboardData('sap', sapJson.result);
+  const [days, setDays] = useState(30);
+  const { data, loading, error, reload } = useDashboardData('sap', sapJson.result, days);
   const { metadata, summary, graph_data: graphs, forecast_table: table } = data;
   const actionRows = Object.values(table).flat();
   const categories = Object.keys(graphs.consumption_analytics_category_trend[0] ?? {})
@@ -34,18 +37,20 @@ export default function SapPrPoPage({ onNavigate }) {
       <main className="main sap-page">
         <Header
           title="SAP PR/PO Automation — Sub-model 4.5"
-          subtitle="BAPI_PR_CREATE · SAP MM real-time inventory API"
+          days={days}
+          onDaysChange={setDays}
+          // subtitle="BAPI_PR_CREATE · SAP MM real-time inventory API"
         />
 
         <div className="sap-content">
           <NetworkStatus loading={loading} error={error} onRetry={reload} />
-          <div className="sap-intro">
+          {/* <div className="sap-intro">
             <div>
               <h2>SAP PR/PO & Parts Intelligence — Sub-model 4.5</h2>
               <p>BAPI_PR_CREATE + SAP MM real-time inventory API. Auto-raises PRs for critical/high-risk parts. ETA accuracy {summary.avg_eta_accuracy_pct}%. API uptime {summary.sap_api_uptime_pct}%.</p>
             </div>
             <span className="method-badge rule">● BAPI_PR_CREATE · SAP MM API</span>
-          </div>
+          </div> */}
 
           <div className="kpis sap-kpis">{kpis.map(kpi => <KPICard key={kpi.label} {...kpi} />)}</div>
 
@@ -80,7 +85,7 @@ export default function SapPrPoPage({ onNavigate }) {
           </div>
 
           <div className="panel inventory-panel">
-            <h3>Real-Time Inventory Status from SAP MM <span className="tag">live · updated 4h ago</span></h3>
+            <SectionTitle tag="live · updated 4h ago" tooltip="Current SAP MM inventory, reservations, purchase-order quantities, and next delivery estimates.">Real-Time Inventory Status from SAP MM</SectionTitle>
             <div className="data-table-wrap">
               <table className="data-table inventory-table">
                 <thead><tr><th>Part Number</th><th>Branch</th><th>Stock on Hand</th><th>Reserved</th><th>Effective Available</th><th>Open PO Qty</th><th>Next Delivery ETA</th><th>Status</th></tr></thead>
@@ -100,7 +105,7 @@ export default function SapPrPoPage({ onNavigate }) {
           </div>
 
           <div className="panel readiness-panel">
-            <h3>Parts Readiness — Job Status <span className="tag">{graphs.parts_readiness_status_by_job.length} active jobs</span></h3>
+            <SectionTitle tag={`${graphs.parts_readiness_status_by_job.length} active jobs`} tooltip="Whether every required part is available for each active job and the next operational stage.">Parts Readiness — Job Status</SectionTitle>
             <div className="readiness-grid">
               {graphs.parts_readiness_status_by_job.map(job => (
                 <div className={`readiness-card ${job.readiness_status.toLowerCase()}`} key={job.job_id}>
@@ -175,7 +180,7 @@ export default function SapPrPoPage({ onNavigate }) {
           </div>
 
           <div className="panel sap-action-panel">
-            <h3>SAP PR/PO Action Log <span className="tag">{summary.sap_prs_auto_raised_today} created · {summary.sap_prs_blocked_anomaly} blocked</span></h3>
+            <SectionTitle tag={`${summary.sap_prs_auto_raised_today} created · ${summary.sap_prs_blocked_anomaly} blocked`} tooltip="Purchase requisitions created by SAP automation and requests awaiting anomaly-related approval.">SAP PR/PO Action Log</SectionTitle>
             <div className="data-table-wrap">
               <table className="data-table sap-action-table">
                 <thead><tr><th>PR ID</th><th>Part</th><th>Branch</th><th>Vendor</th><th>Qty</th><th>Value</th><th>Order Date</th><th>Stockout Risk</th><th>SAP Status</th><th>ETA if Today</th><th>Actions</th></tr></thead>

@@ -1,4 +1,5 @@
 import '../styles/dashboard.css';
+import { useState } from 'react';
 import stockoutJson from '../data/Stockout_Risk_Scoring.json';
 import useDashboardData from '../hooks/useDashboardData';
 import NetworkStatus from '../components/NetworkStatus';
@@ -6,6 +7,7 @@ import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import KPICard from '../components/KPICard';
 import ChartCard from '../components/ChartCard';
+import SectionTitle from '../components/SectionTitle';
 import DynamicChart from '../assets/charts/DynamicChart';
 import RiskTrend from '../assets/charts/RiskTrend';
 import RiskScatter from '../assets/charts/RiskScatter';
@@ -30,7 +32,8 @@ function autoPrRaised(row) {
 }
 
 export default function StockoutRiskPage({ onNavigate }) {
-  const { data, loading, error, reload } = useDashboardData('stockout', stockoutJson.result);
+  const [days, setDays] = useState(30);
+  const { data, loading, error, reload } = useDashboardData('stockout', stockoutJson.result, days);
   const { metadata, summary, graph_data: graphs, forecast_table: table } = data;
   const forecastRows = flatten(table).sort((first, second) => second.stockout_risk_pct - first.stockout_risk_pct);
   const detailsByPartAndBranch = Object.fromEntries(forecastRows.map(row => [rowKey(row), row]));
@@ -58,18 +61,20 @@ export default function StockoutRiskPage({ onNavigate }) {
       <main className="main stockout-page">
         <Header
           title="Stockout Risk Scoring — Sub-model 4.2"
-          subtitle="Upstream from 4.1 predicted_qty · Auto-PR automation"
+          days={days}
+          onDaysChange={setDays}
+          // subtitle="Upstream from 4.1 predicted_qty · Auto-PR automation"
         />
 
         <div className="stockout-content">
           <NetworkStatus loading={loading} error={error} onRetry={reload} />
-          <div className="stockout-intro">
+          {/* <div className="stockout-intro">
             <div>
               <h2>Stockout Risk Scoring — Sub-model 4.2</h2>
               <p>Parts ranked by stockout probability. Upstream from 4.1 predicted_qty. Auto-PRs triggered for critical/high risk parts. Anomaly-flagged PRs held pending review.</p>
             </div>
             <span className="risk-action-badge">● {summary.critical_stockout_parts} CRITICAL · action required</span>
-          </div>
+          </div> */}
 
           <div className="kpis stockout-kpis">
             {kpis.map(kpi => <KPICard key={kpi.label} {...kpi} />)}
@@ -117,7 +122,10 @@ export default function StockoutRiskPage({ onNavigate }) {
           </div>
 
           <div className="panel trigger-panel">
-            <h3>Auto PR Trigger Log — Today <span className="tag">{summary.auto_pr_triggered_today} raised · {summary.auto_pr_blocked_anomaly} blocked</span></h3>
+            <SectionTitle
+              tag={`${summary.auto_pr_triggered_today} raised · ${summary.auto_pr_blocked_anomaly} blocked`}
+              tooltip="Today’s automated purchase-requisition decisions, including any requests held for anomaly review."
+            >Auto PR Trigger Log — Today</SectionTitle>
             <div className="trigger-list">
               {alerts.map(alert => (
                 <div className="trigger-row" key={alert.alert_id}>
@@ -138,7 +146,7 @@ export default function StockoutRiskPage({ onNavigate }) {
           </div>
 
           <div className="panel stockout-table-panel">
-            <h3>Critical & High Stockout Risk Parts <span className="tag">primary_table.rows · ranked by risk</span></h3>
+            <SectionTitle tag="primary_table.rows · ranked by risk" tooltip="Critical and high-risk parts ranked by stockout probability, stock cover, and supplier lead time.">Critical & High Stockout Risk Parts</SectionTitle>
             <div className="data-table-wrap">
               <table className="data-table stockout-table">
                 <thead>

@@ -52,8 +52,11 @@ function unwrapDashboardPayload(payload) {
   return payload?.result ?? payload?.data?.result ?? payload?.data ?? payload;
 }
 
-export async function getDashboardData(page, options = {}) {
-  const response = await apiClient.get(dashboardEndpoints[page], options);
+export async function getDashboardData(page, { days = 30, ...options } = {}) {
+  const response = await apiClient.get(dashboardEndpoints[page], {
+    ...options,
+    params: { ...options.params, days },
+  });
   const payload = unwrapDashboardPayload(response.data);
   return page === 'demand' ? normalizeDemandForecast(payload) : payload;
 }

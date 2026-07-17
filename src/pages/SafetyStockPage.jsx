@@ -1,4 +1,5 @@
 import '../styles/dashboard.css';
+import { useState } from 'react';
 import safetyJson from '../data/Safety_Stock_Lead_Time_Optimiser.json';
 import useDashboardData from '../hooks/useDashboardData';
 import NetworkStatus from '../components/NetworkStatus';
@@ -6,6 +7,7 @@ import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import KPICard from '../components/KPICard';
 import ChartCard from '../components/ChartCard';
+import SectionTitle from '../components/SectionTitle';
 import DynamicChart from '../assets/charts/DynamicChart';
 import { CHART_COLORS } from '../assets/charts/chartSetup';
 
@@ -15,7 +17,8 @@ const inr = value => `₹${(value / 100000).toFixed(value >= 100000 ? 1 : 2)}L`;
 const dateLabel = value => new Date(`${value}T00:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 
 export default function SafetyStockPage({ onNavigate }) {
-  const { data, loading, error, reload } = useDashboardData('safety', safetyJson.result);
+  const [days, setDays] = useState(30);
+  const { data, loading, error, reload } = useDashboardData('safety', safetyJson.result, days);
   const { metadata, summary, graph_data: graphs, forecast_table: table } = data;
   const stockRecommendations = table.SAFETY_STOCK_INCREASE;
   const vendorSwitch = table.VENDOR_SWITCH[0];
@@ -37,18 +40,20 @@ export default function SafetyStockPage({ onNavigate }) {
       <main className="main safety-page">
         <Header
           title="Safety Stock Optimiser — Sub-model 4.3"
-          subtitle={`SS = Z × √(L×σd² + d²×σL²) · Service level ${metadata.granularity}`}
+          days={days}
+          onDaysChange={setDays}
+          // subtitle={`SS = Z × √(L×σd² + d²×σL²) · Service level ${metadata.granularity}`}
         />
 
         <div className="safety-content">
           <NetworkStatus loading={loading} error={error} onRetry={reload} />
-          <div className="safety-intro">
+          {/* <div className="safety-intro">
             <div>
               <h2>Safety Stock Optimiser — Sub-model 4.3</h2>
               <p>Safety stock computed with SS = Z × √(L×σd² + d²×σL²). Service-level target 80%. Lead-time variability factored in.</p>
             </div>
             <span className="method-badge rule">● rule_based formula · sub-model</span>
-          </div>
+          </div> */}
 
           <div className="kpis safety-kpis">{kpis.map(kpi => <KPICard key={kpi.label} {...kpi} />)}</div>
 
@@ -107,7 +112,7 @@ export default function SafetyStockPage({ onNavigate }) {
           </div>
 
           <div className="panel vendor-dashboard">
-            <h3>Vendor Performance Dashboard <span className="tag">lead_time · online_%</span></h3>
+            <SectionTitle tag="lead_time · online_%" tooltip="Supplier lead-time reliability, variation, on-time delivery rate, and risk tier.">Vendor Performance Dashboard</SectionTitle>
             <div className="vendor-card-grid">
               {graphs.vendor_lead_time_performance_bar.map(vendor => (
                 <div className={`vendor-card tier-${vendor.risk_tier.toLowerCase()}`} key={vendor.vendor_id}>
@@ -127,7 +132,7 @@ export default function SafetyStockPage({ onNavigate }) {
           </div>
 
           <div className="panel order-schedule">
-            <h3>Recommended Order Schedule <span className="tag">{graphs.recommended_order_schedule.length} reminders · date today</span></h3>
+            <SectionTitle tag={`${graphs.recommended_order_schedule.length} reminders · date today`} tooltip="Recommended replenishment dates and quantities based on safety-stock requirements and supplier lead times.">Recommended Order Schedule</SectionTitle>
             {graphs.recommended_order_schedule.map(order => (
               <div className="schedule-row" key={`${order.part_number}-${order.branch_id}`}>
                 <span><strong>{order.part_number}</strong><small>{branchNames[order.branch_id]} · {vendorNames[order.vendor_id]}</small></span>
@@ -140,7 +145,7 @@ export default function SafetyStockPage({ onNavigate }) {
           </div>
 
           <div className="panel safety-recommendations">
-            <h3>Safety Stock Change Recommendations <span className="tag">primary_table</span></h3>
+            <SectionTitle tag="primary_table" tooltip="Part-level safety-stock changes recommended by demand volatility and lead-time variability.">Safety Stock Change Recommendations</SectionTitle>
             <div className="data-table-wrap">
               <table className="data-table safety-table">
                 <thead>
@@ -167,7 +172,7 @@ export default function SafetyStockPage({ onNavigate }) {
           </div>
 
           {vendorSwitch && <div className="panel vendor-switch">
-            <h3>Vendor Switch Recommendation <span className="tag">Hydraulics · CatParts Direct</span></h3>
+            <SectionTitle tag="Hydraulics · CatParts Direct" tooltip="Recommended vendor change when supplier performance creates an avoidable stockout risk.">Vendor Switch Recommendation</SectionTitle>
             <div className="vendor-switch-grid">
               <div className="switch-vendor current">
                 <small>CURRENT VENDOR</small><strong>{vendorSwitch.current_vendor_name}</strong>

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { getDashboardData } from '../services/dashboardApi';
 
 /** Fetches one dashboard model and retains the supplied JSON while a request fails. */
-export default function useDashboardData(page, fallbackData) {
+export default function useDashboardData(page, fallbackData, days = 30) {
   const [data, setData] = useState(fallbackData);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -12,7 +12,7 @@ export default function useDashboardData(page, fallbackData) {
     setError(null);
 
     try {
-      const nextData = await getDashboardData(page);
+      const nextData = await getDashboardData(page, { days });
       setData(nextData);
     } catch (requestError) {
       if (requestError.name !== 'CanceledError' && requestError.code !== 'ERR_CANCELED') {
@@ -21,12 +21,12 @@ export default function useDashboardData(page, fallbackData) {
     } finally {
       setLoading(false);
     }
-  }, [page]);
+  }, [page, days]);
 
   useEffect(() => {
     let cancelled = false;
 
-    getDashboardData(page)
+    getDashboardData(page, { days })
       .then(nextData => { if (!cancelled) setData(nextData); })
       .catch(requestError => {
         if (!cancelled && requestError.code !== 'ERR_CANCELED') setError(requestError.message);
@@ -34,7 +34,7 @@ export default function useDashboardData(page, fallbackData) {
       .finally(() => { if (!cancelled) setLoading(false); });
 
     return () => { cancelled = true; };
-  }, [page]);
+  }, [page, days]);
 
   return { data, loading, error, reload };
 }
