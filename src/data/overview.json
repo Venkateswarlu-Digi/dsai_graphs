@@ -102,7 +102,7 @@
       },
       "prPoActivity": {
         "chartId": "chOvPR",
-        "title": "PR/PO Activity — 7 Days",
+        "title": "PR/PO Activity",
         "tag": "4.5 · SAP",
         "type": "line",
         "data": [

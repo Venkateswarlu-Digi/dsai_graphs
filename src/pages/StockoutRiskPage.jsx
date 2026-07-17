@@ -63,7 +63,7 @@ export default function StockoutRiskPage({ onNavigate }) {
           title="Stockout Risk Scoring — Sub-model 4.2"
           days={days}
           onDaysChange={setDays}
-          // subtitle="Upstream from 4.1 predicted_qty · Auto-PR automation"
+          subtitle="This module takes the demand forecasts from Module 4.1 and combines them with current stock levels and vendor lead times to score every part's real-time risk of running out of stock. Unlike Demand Forecast, this is a rule-based scoring engine, not a trained ML model."
         />
 
         <div className="stockout-content">
@@ -85,7 +85,7 @@ export default function StockoutRiskPage({ onNavigate }) {
               title="Risk Trend — 6 Weeks"
               tag="stacked severity"
               height="sm"
-              tooltip="Stacked bar chart of weekly Critical, High, and Medium stockout risk part counts over 6 weeks, showing whether the risk profile is trending up or down."
+              tooltip="A stacked bar chart showing how many parts were Critical (red), High (orange), or Medium (purple) risk each week over the last 6 weeks. Reading left to right tells you whether the overall risk picture is getting better or worse over time."
             >
               <RiskTrend data={riskTrend} />
             </ChartCard>
@@ -93,7 +93,7 @@ export default function StockoutRiskPage({ onNavigate }) {
               title="Days Cover vs Lead Time"
               tag="scatter · bubble size = risk"
               height="sm"
-              tooltip="Bubble scatter plot mapping each part's remaining days of stock cover against its vendor lead time, with bubble size representing risk score — parts in the danger zone (low cover, long lead time) stand out immediately."
+              tooltip="A scatter plot where each dot is one part. The X-axis is the vendor's lead time in days; the Y-axis is how many days of stock cover remains; the size of the dot reflects the risk score. The most urgent parts are the ones sitting in the bottomright area — low days-of-cover but a long lead time — because the part will run dry before a new order could even arrive."
             >
               <RiskScatter data={graphs.days_of_cover_vs_lead_time_scatter} />
             </ChartCard>
@@ -101,7 +101,7 @@ export default function StockoutRiskPage({ onNavigate }) {
               title="Jobs at Risk by Category"
               tag="SLA impact"
               height="sm"
-              tooltip="Bar chart showing jobs at stockout risk and jobs specifically at SLA breach risk, grouped by part category."
+              tooltip="A grouped bar chart comparing total Jobs at Risk against SLA-bound Jobs at Risk, per part category — useful for prioritizing which categories are creating the most customer/contract exposure, not just the most numerical risk."
             >
               <DynamicChart
                 labels={graphs.jobs_impacted_by_category.map(item => item.category)}

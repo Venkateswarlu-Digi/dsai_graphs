@@ -56,7 +56,7 @@ export default function SapPrPoPage({ onNavigate }) {
 
           <div className="sap-top-charts">
             <ChartCard
-              title="PR/PO Activity — 7 Days"
+              title="PR/PO Activity"
               tag="daily volume"
               height="sm"
               tooltip="Combo chart of daily auto-generated purchase requisitions, purchase orders raised, and job-triggered procurement events over the past week, showing SAP-side procurement throughput."

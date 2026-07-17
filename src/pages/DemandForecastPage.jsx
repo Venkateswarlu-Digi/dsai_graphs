@@ -42,29 +42,30 @@ export default function DemandForecastPage({ onNavigate }) {
   const peak = graphs.monsoon_demand_uplift.reduce((best, item) =>
     item.monsoon_uplift_pct > best.monsoon_uplift_pct ? item : best
   );
-  const horizon60Ratio = summary.total_predicted_units_60d / summary.total_predicted_units_30d;
-  const horizon90Ratio = summary.total_predicted_units_90d / summary.total_predicted_units_30d;
+  const selectedForecastUnits = summary[`total_predicted_units_${days}d`]
+    ?? predictions.reduce((total, row) => total + row.predicted_qty, 0);
+  const selectedForecastValue = summary[`total_forecast_value_inr_${days}d`];
 
   const kpis = [
     {
       label: 'Parts Forecasted',
       value: number.format(summary.total_parts_forecasted),
       delta: `${summary.total_branches_covered} branches · daily grain`,
-      tooltip: 'Total number of spare parts for which the AI model generated demand forecasts across all branches.'
+      tooltip: 'How many distinct parts currently have an active forecast, for the selected branches/categories/window.'
     },
     {
-      label: 'Units Forecast (30d)',
-      value: number.format(summary.total_predicted_units_30d),
-      delta: `₹${compact.format(summary.total_forecast_value_inr_30d)} procurement est.`,
+      label: `Units Forecast (${days}d)`,
+      value: number.format(selectedForecastUnits),
+      delta: selectedForecastValue == null ? 'selected forecast horizon' : `₹${compact.format(selectedForecastValue)} procurement est.`,
       deltaDir: 'up',
-      tooltip: 'Expected demand for the next 30 days. Procurement estimate is based on forecasted quantity.'
+      tooltip: 'Total predicted consumption, in units, across all forecasted parts over the next 30 days.'
     },
     {
       label: 'Forecast Accuracy',
       value: `${summary.model_accuracy.forecast_accuracy_pct}%`,
       delta: `MAPE ${summary.model_accuracy.wape_overall}% · MAPE Fast ${summary.model_accuracy.mape_fast_movers}%`,
       deltaDir: 'up',
-      tooltip: 'Overall prediction accuracy. Lower MAPE indicates better forecasting performance.'
+      tooltip: 'How accurate the model has been historically, expressed as 100% minus its error rate (MAPE), based on backtesting against real outcomes.'
     },
     {
       label: 'Peak Demand Uplift',
@@ -72,7 +73,7 @@ export default function DemandForecastPage({ onNavigate }) {
       delta: `${peak.category} · monsoon peak`,
       type: 'alert-amb',
       deltaDir: 'warn',
-      tooltip: 'Increase in expected demand during seasonal peaks such as the monsoon.'
+      tooltip: 'The seasonal increase currently being applied to demand forecasts because of the active season (monsoon).'
     }
   ];
   return (
@@ -99,7 +100,7 @@ export default function DemandForecastPage({ onNavigate }) {
               title="Forecast vs Actual — 90d"
               tag="job_count · weekly · 80% CI"
               height="sm"
-              tooltip="Detailed line chart plotting actual job-count demand against the model's p50 forecast, with a shaded p10–p90 confidence band, over a 90-day weekly view."
+              tooltip="A line chart of weekly job/consumption volume over the last several weeks. The solid green line is what actually happened; the dashed blue line is the model's forecast for the upcoming weeks; the shaded band around the forecast is the 80% confidence interval — the range the model expects the true value to fall within 8 times out of 10. A narrow band means high confidence; a wide band means more uncertainty."
             >
               <ForecastTrend data={graphs.demand_trend_line_all_parts} />
             </ChartCard>
@@ -107,7 +108,7 @@ export default function DemandForecastPage({ onNavigate }) {
               title="Demand by Category (30d)"
               tag="predicted_qty"
               height="sm"
-              tooltip="Bar chart showing the total predicted parts demand for the next 30 days, broken down by category, to prioritize which categories need attention."
+              tooltip="A bar chart of total predicted 30-day demand, split out by part category (Engine, Hydraulics, Filters, etc.), showing at a glance where the biggest volume of future demand is concentrated."
             >
               <DynamicChart
                 labels={graphs.demand_by_category_bar.slice(0, 6).map(item => item.category)}
@@ -129,7 +130,7 @@ export default function DemandForecastPage({ onNavigate }) {
               title="Top Parts — Stock vs Forecast"
               tag="gap analysis"
               height="sm"
-              tooltip="Bar chart comparing current stock on hand against 30-day forecasted demand for the top 5 highest-demand parts, exposing potential supply gaps."
+              tooltip="A gap-analysis bar chart comparing current Stock on Hand (blue bars) against the 30-day Forecast (green bars) for the highest-priority parts. Where the green bar is much taller than the blue bar, current stock won't cover the forecasted demand — an early warning sign that feeds into the Stockout Risk module."
             >
               <DynamicChart
                 labels={topParts.map(item => item.part_number)}
@@ -152,7 +153,7 @@ export default function DemandForecastPage({ onNavigate }) {
               title="Movement Classification"
               tag="portfolio split"
               height="sm"
-              tooltip="Donut chart splitting the parts portfolio into Fast, Medium, Slow, and Dead movers based on consumption velocity, useful for inventory strategy decisions."
+              tooltip="A donut chart showing what share of the parts portfolio is Fast, Medium, or Slow moving, based on historical consumption velocity. This classification drives which forecasting method (LightGBM vs Prophet vs kNN) is used for each part, and how much safety stock buffer is appropriate."
             >
               <DynamicChart
                 type="doughnut"
@@ -171,14 +172,14 @@ export default function DemandForecastPage({ onNavigate }) {
                 Part-Level Demand Predictions
                 <InfoTooltip text="Part-level forecasts by branch. Compare forecast horizons, stock, days cover, and vendor lead time to prioritize replenishment." />
               </span>
-``              <span className="tag">primary_table · sortable</span>
+              <span className="tag">primary_table · selected horizon</span>
             </h3>
             <div className="data-table-wrap">
               <table className="data-table demand-table">
                 <thead>
                   <tr>
                     <th>#</th><th>Part</th><th>Branch</th><th>Category</th>
-                    <th>30d Forecast</th><th>60d Forecast</th><th>90d Forecast</th>
+                    <th>Forecast ({days}d)</th><th>Change</th>
                     <th>Stock on Hand</th><th>Days Cover</th><th>Lead Time</th>
                     <th>Confidence</th><th>Trend</th><th>Movement</th>
                   </tr>
@@ -186,6 +187,7 @@ export default function DemandForecastPage({ onNavigate }) {
                 <tbody>
                   {predictions.map((row, index) => {
                     const confidence = Math.max(0, Math.round(100 - row.stockout_risk_pct));
+                    const forecastChange = row.predicted_qty - row.stock_on_hand;
                     return (
                       <tr key={row.prediction_id}>
                         <td>{index + 1}</td>
@@ -193,8 +195,7 @@ export default function DemandForecastPage({ onNavigate }) {
                         <td>{row.branch_name.replace(' Branch', '')}</td>
                         <td><span className="category-chip">{row.part_category}</span></td>
                         <td>{row.predicted_qty}</td>
-                        <td>{row.predicted_qty_60d ?? Math.round(row.predicted_qty * horizon60Ratio)}</td>
-                        <td>{row.predicted_qty_90d ?? Math.round(row.predicted_qty * horizon90Ratio)}</td>
+                        <td className={forecastChange > 0 ? 'danger-text' : 'good-text'}>{forecastChange > 0 ? '+' : ''}{Math.round(forecastChange)}</td>
                         <td>{row.stock_on_hand}</td>
                         <td className={row.days_of_cover < row.vendor_lead_time_days ? 'danger-text' : 'good-text'}>{formatDays(row.days_of_cover)}</td>
                         <td>{formatDays(row.vendor_lead_time_days)}</td>
